@@ -25,7 +25,7 @@ while ($reportStatus->getStatus() === 'inProgress') {
 
 if($reportStatus->getStatus() === 'success') {
     printf("Start to download report\n");
-    $reportFilename = './reports/' . date('YmdHis') . '.pdf';
+    $reportFilename = './report_' . date('YmdHis') . '.pdf';
     $client->api()->creditRatingNbch()->getPdfReport($reportStatus->getRequestId(), $reportFilename);
     printf("Report downloaded: %s\n", $reportFilename);
 } else {
