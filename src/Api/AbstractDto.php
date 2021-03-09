@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api;
+namespace Exbico\Underwriting\Api;
 
 use ReflectionClass;
 

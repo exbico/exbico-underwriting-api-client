@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Tests\Unit;
+namespace Exbico\Underwriting\Tests\Unit;
 
-use Exbico\Tests\Traits\WithClient;
+use Exbico\Underwriting\Tests\Traits\WithClient;
 use PHPUnit\Framework\TestCase;
 
 final class ClientTest extends TestCase

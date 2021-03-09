@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1\Dto\Request;
+namespace Exbico\Underwriting\Api\V1\Dto\Request;
 
-use Exbico\Api\AbstractDto;
+use Exbico\Underwriting\Api\AbstractDto;
 
 final class DocumentDto extends AbstractDto
 {

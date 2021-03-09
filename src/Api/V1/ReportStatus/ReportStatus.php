@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1\ReportStatus;
+namespace Exbico\Underwriting\Api\V1\ReportStatus;
 
-use Exbico\Api\V1\Api;
-use Exbico\Api\V1\Dto\Response\ReportStatusDto;
+use Exbico\Underwriting\Api\V1\Api;
+use Exbico\Underwriting\Api\V1\Dto\Response\ReportStatusDto;
 
 class ReportStatus extends Api implements ReportStatusInterface
 {

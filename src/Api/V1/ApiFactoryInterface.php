@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1;
+namespace Exbico\Underwriting\Api\V1;
 
-use Exbico\Api\V1\CreditRating\Nbch\CreditRatingNbchInterface;
-use Exbico\Api\V1\ReportStatus\ReportStatusInterface;
+use Exbico\Underwriting\Api\V1\CreditRating\Nbch\CreditRatingNbchInterface;
+use Exbico\Underwriting\Api\V1\ReportStatus\ReportStatusInterface;
 
 interface ApiFactoryInterface
 {

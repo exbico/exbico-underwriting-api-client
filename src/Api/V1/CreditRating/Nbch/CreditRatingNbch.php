@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1\CreditRating\Nbch;
+namespace Exbico\Underwriting\Api\V1\CreditRating\Nbch;
 
-use Exbico\Api\V1\Api;
-use Exbico\Api\V1\Dto\Request\DocumentDto;
-use Exbico\Api\V1\Dto\Request\PersonDto;
-use Exbico\Api\V1\Dto\Response\ReportStatusDto;
+use Exbico\Underwriting\Api\V1\Api;
+use Exbico\Underwriting\Api\V1\Dto\Request\DocumentDto;
+use Exbico\Underwriting\Api\V1\Dto\Request\PersonDto;
+use Exbico\Underwriting\Api\V1\Dto\Response\ReportStatusDto;
 
 class CreditRatingNbch extends Api implements CreditRatingNbchInterface
 {

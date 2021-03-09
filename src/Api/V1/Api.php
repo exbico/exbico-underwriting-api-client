@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1;
+namespace Exbico\Underwriting\Api\V1;
 
-use Exbico\Api\AbstractApi;
+use Exbico\Underwriting\Api\AbstractApi;
 
 abstract class Api extends AbstractApi
 {

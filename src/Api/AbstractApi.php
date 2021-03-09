@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api;
+namespace Exbico\Underwriting\Api;
 
-use Exbico\Client;
+use Exbico\Underwriting\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;

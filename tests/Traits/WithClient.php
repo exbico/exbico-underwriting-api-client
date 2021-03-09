@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Tests\Traits;
+namespace Exbico\Underwriting\Tests\Traits;
 
-use Exbico\ApiSettings;
-use Exbico\Client;
+use Exbico\Underwriting\ApiSettings;
+use Exbico\Underwriting\Client;
 use LogicException;
 
 trait WithClient

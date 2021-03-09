@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
 
-use Exbico\Api\V1\Dto\Request\DocumentDto;
-use Exbico\Api\V1\Dto\Request\PersonDto;
+use Exbico\Underwriting\Api\V1\Dto\Request\DocumentDto;
+use Exbico\Underwriting\Api\V1\Dto\Request\PersonDto;
 
 $client = getClient();
 

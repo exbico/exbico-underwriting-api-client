@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1;
+namespace Exbico\Underwriting\Api\V1;
 
-use Exbico\Api\V1\CreditRating\Nbch\CreditRatingNbch;
-use Exbico\Api\V1\CreditRating\Nbch\CreditRatingNbchInterface;
-use Exbico\Api\V1\ReportStatus\ReportStatus;
-use Exbico\Api\V1\ReportStatus\ReportStatusInterface;
-use Exbico\Client;
+use Exbico\Underwriting\Api\V1\CreditRating\Nbch\CreditRatingNbch;
+use Exbico\Underwriting\Api\V1\CreditRating\Nbch\CreditRatingNbchInterface;
+use Exbico\Underwriting\Api\V1\ReportStatus\ReportStatus;
+use Exbico\Underwriting\Api\V1\ReportStatus\ReportStatusInterface;
+use Exbico\Underwriting\Client;
 
 class ApiFactory implements ApiFactoryInterface
 {

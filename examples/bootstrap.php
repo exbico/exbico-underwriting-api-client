@@ -2,8 +2,8 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Exbico\ApiSettings;
-use Exbico\Client;
+use Exbico\Underwriting\ApiSettings;
+use Exbico\Underwriting\Client;
 
 function getClient(): Client
 {

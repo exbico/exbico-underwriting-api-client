@@ -13,12 +13,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Exbico\\": "src/"
+            "Exbico\\Underwriting\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Exbico\\Tests\\": "tests/"
+            "Exbico\\Underwriting\\Tests\\": "tests/"
         }
     },
     "require-dev": {

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico;
+namespace Exbico\Underwriting;
 
-use Exbico\Api\V1\ApiFactory;
-use Exbico\Api\V1\ApiFactoryInterface;
+use Exbico\Underwriting\Api\V1\ApiFactory;
+use Exbico\Underwriting\Api\V1\ApiFactoryInterface;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;

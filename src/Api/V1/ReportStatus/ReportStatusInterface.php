@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Api\V1\ReportStatus;
+namespace Exbico\Underwriting\Api\V1\ReportStatus;
 
 interface ReportStatusInterface
 {
