@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1\CreditRating\Nbch;
 
-use Exbico\Underwriting\Api\V1\Dto\Request\DocumentDto;
-use Exbico\Underwriting\Api\V1\Dto\Request\PersonDto;
-use Exbico\Underwriting\Api\V1\Dto\Response\ReportStatusDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 
 interface CreditRatingNbchInterface
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Exbico\Underwriting\Api\V1\ReportStatus;
 
 use Exbico\Underwriting\Api\V1\Api;
-use Exbico\Underwriting\Api\V1\Dto\Response\ReportStatusDto;
+use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 
 class ReportStatus extends Api implements ReportStatusInterface
 {

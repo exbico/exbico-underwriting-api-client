@@ -1,7 +1,7 @@
 <?php
-namespace Exbico\Underwriting\Api\V1\Dto\Response;
+namespace Exbico\Underwriting\Dto\V1\Response;
 
-use Exbico\Underwriting\Api\AbstractDto;
+use Exbico\Underwriting\Dto\AbstractDto;
 
 class ReportStatusDto extends AbstractDto
 {
