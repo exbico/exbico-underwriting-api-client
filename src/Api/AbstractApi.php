@@ -4,10 +4,18 @@ declare(strict_types=1);
 namespace Exbico\Underwriting\Api;
 
 use Exbico\Underwriting\Client;
+use Exbico\Underwriting\Exception\ForbiddenException;
+use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\ServerErrorException;
+use Exbico\Underwriting\Exception\TooManyRequestsException;
+use Exbico\Underwriting\Exception\UnauthorizedException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use GuzzleHttp\Psr7\Utils;
+use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -43,13 +51,15 @@ abstract class AbstractApi
         $request = $this->signRequest($request)
             ->withHeader('User-Agent', self::HEADER_USER_AGENT)
             ->withUri(UriResolver::resolve($baseUri, $request->getUri()));
-        return $this->getClient()->getHttpClient()->sendRequest($request);
+        $response = $this->getClient()->getHttpClient()->sendRequest($request);
+        $this->checkForErrors($response);
+        return $response;
     }
 
     protected function download(ResponseInterface $response, string $savePath): void
     {
         $fh = fopen($savePath, 'wb+');
-        while($response->getBody()->eof() === false) {
+        while ($response->getBody()->eof() === false) {
             fwrite($fh, $response->getBody()->read(8192));
         }
         fclose($fh);
@@ -63,7 +73,7 @@ abstract class AbstractApi
     /**
      * @param array $body
      * @return StreamInterface
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function prepareRequestBody(array $body): StreamInterface
     {
@@ -73,7 +83,7 @@ abstract class AbstractApi
     /**
      * @param ResponseInterface $response
      * @return array
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function parseResponseResult(ResponseInterface $response): array
     {
@@ -93,9 +103,45 @@ abstract class AbstractApi
                 ]) . '/');
     }
 
-    private function signRequest($request): RequestInterface
+    private function signRequest(RequestInterface $request): RequestInterface
     {
         $token = $this->getClient()->getApiSettings()->getToken();
         return $request->withHeader(self::HEADER_TOKEN_KEY, $token);
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     * @throws HttpException
+     */
+    protected function checkForErrors(ResponseInterface $response): void
+    {
+        switch ($response->getStatusCode()) {
+            case 200:
+            case 201:
+            case 202:
+            case 203:
+            case 204:
+                break;
+            case RequestValidationFailedException::HTTP_STATUS:
+                throw new RequestValidationFailedException($response->getBody()->getContents());
+            case UnauthorizedException::HTTP_STATUS:
+                throw new UnauthorizedException($response->getBody()->getContents());
+            case ForbiddenException::HTTP_STATUS:
+                throw new ForbiddenException($response->getBody()->getContents());
+            case NotFoundException::HTTP_STATUS:
+                throw new NotFoundException($response->getBody()->getContents());
+            case TooManyRequestsException::HTTP_STATUS:
+                throw new TooManyRequestsException($response->getBody()->getContents());
+            case ServerErrorException::HTTP_STATUS:
+                throw new ServerErrorException($response->getBody()->getContents());
+            default:
+                throw new HttpException($response->getBody()->getContents(), $response->getStatusCode());
+        }
     }
 }
