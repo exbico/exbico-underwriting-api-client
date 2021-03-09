@@ -1,0 +1,27 @@
+{
+    "name": "exbico/underwriting-api-client",
+    "description": "The Exbico Underwriting PHP Client Library enables you to work with Exbico Underwriting API on your server.",
+    "keywords": ["Exbico", "API", "underwriting"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [],
+    "require": {
+        "php": "^7.3 || ^8.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "psr/log": "^1.1",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Exbico\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Exbico\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
