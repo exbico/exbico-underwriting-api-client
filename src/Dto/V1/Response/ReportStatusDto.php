@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace Exbico\Underwriting\Dto\V1\Response;
 
 use Exbico\Underwriting\Dto\AbstractDto;
 
-class ReportStatusDto extends AbstractDto
+final class ReportStatusDto extends AbstractDto
 {
     public $requestId;
     public $status;
