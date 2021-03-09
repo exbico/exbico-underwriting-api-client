@@ -40,7 +40,7 @@ class CreditRatingNbch extends Api implements CreditRatingNbchInterface
      * @param string $savePath
      * @throws ClientExceptionInterface
      */
-    public function getPdfReport(int $requestId, string $savePath): void
+    public function downloadPdfReport(int $requestId, string $savePath): void
     {
         $path = sprintf('credit-rating-nbch/%d/pdf', $requestId);
         $request = $this->makeRequest('GET', $path);

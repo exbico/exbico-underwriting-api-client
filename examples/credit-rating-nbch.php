@@ -22,7 +22,7 @@ echo "\n";
 
 if($reportStatus->getStatus() === 'success') {
     printf("Start to download report\n");
-    $client->api()->creditRatingNbch()->getPdfReport($reportStatus->getRequestId(), $reportSavePath);
+    $client->api()->creditRatingNbch()->downloadPdfReport($reportStatus->getRequestId(), $reportSavePath);
     printf("Report downloaded: %s\n", $reportSavePath);
 } else {
     var_dump($reportStatus);

@@ -23,5 +23,5 @@ interface CreditRatingNbchInterface
      * @param string $savePath
      * @return mixed
      */
-    public function getPdfReport(int $requestId, string $savePath);
+    public function downloadPdfReport(int $requestId, string $savePath);
 }

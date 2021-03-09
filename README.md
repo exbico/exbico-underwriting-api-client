@@ -24,7 +24,7 @@ Credit rating NBCH requested with ID: 5158827
 
 #### Сохранение отчета НБКИ
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/credit-rating-nbch-get.php {REQUEST_ID}
+API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/credit-rating-nbch-download.php {REQUEST_ID}
 ```
 Ответ:
 ```

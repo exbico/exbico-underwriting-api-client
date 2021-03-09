@@ -12,5 +12,5 @@ if (is_null($requestId)) {
 }
 $reportSavePath = __DIR__ . DIRECTORY_SEPARATOR . 'report_' . date('YmdHis') . '.pdf';
 
-$client->api()->creditRatingNbch()->getPdfReport($requestId, $reportSavePath);
+$client->api()->creditRatingNbch()->downloadPdfReport($requestId, $reportSavePath);
 printf("PDF Report downloaded: %s", $reportSavePath);
