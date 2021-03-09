@@ -12,21 +12,8 @@ use Psr\Log\NullLogger;
 
 class Client
 {
-    /**
-     * Http Client
-     *
-     * @var ClientInterface
-     */
     protected $httpClient;
-
-    /**
-     * @var LoggerInterface
-     */
     protected $logger;
-
-    /**
-     * @var ApiSettings
-     */
     protected $apiSettings;
 
     public function __construct(ApiSettings $apiSettings)
