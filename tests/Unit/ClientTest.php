@@ -10,11 +10,11 @@ final class ClientTest extends TestCase
 {
     use WithClient;
 
-    public function testClient(): void
+    public function testClientInit(): void
     {
-        self::assertNotNull($this->getClient());
         self::assertNotNull($this->getClient()->getApiSettings());
         self::assertNotNull($this->getClient()->getHttpClient());
         self::assertNotNull($this->getClient()->getLogger());
+        self::assertNotNull($this->getClient()->api());
     }
 }

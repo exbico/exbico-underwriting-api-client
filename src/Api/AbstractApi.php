@@ -51,7 +51,14 @@ abstract class AbstractApi
         $request = $this->signRequest($request)
             ->withHeader('User-Agent', self::HEADER_USER_AGENT)
             ->withUri(UriResolver::resolve($baseUri, $request->getUri()));
+        $this->getClient()->getLogger()->debug('Send request', [
+            'url' => (string)$request->getUri(),
+            'body' => $request->getBody()->getContents()
+        ]);
         $response = $this->getClient()->getHttpClient()->sendRequest($request);
+        $this->getClient()->getLogger()->debug('Receive response', [
+            'status' => $response->getStatusCode(),
+        ]);
         $this->checkForErrors($response);
         return $response;
     }

@@ -1,33 +1,29 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/bootstrap/bootstrap.php';
 
-use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
-use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+/*****************************************/
+/**** FULL NBCH CREDIT RATING PROCESS ****/
+/*****************************************/
 
-$client = getClient();
-
-$document = new DocumentDto();
-$document->setNumber('333333');
-$document->setSeries('5555');
-
-$person = new PersonDto();
-$person->setFirstname('Иван');
-$person->setLastname('Иванов');
-$person->setMiddlename('Иванович');
+$client = getTestClient();
+$person = getTestPerson();
+$document = getTestDocument();
+$reportSavePath = __DIR__ . DIRECTORY_SEPARATOR . 'report_' .  date('YmdHis') . '.pdf';
 
 $reportStatus = $client->api()->creditRatingNbch()->requestReport($person, $document);
 printf("Credit rating NBCH requested with ID: %d\n", $reportStatus->getRequestId());
-printf("Waiting for status change\n");
+printf("Waiting for status change");
 while ($reportStatus->getStatus() === 'inProgress') {
     sleep(5);
     $reportStatus = $client->api()->reportStatus()->getReportStatus($reportStatus->getRequestId());
+    echo '.';
 }
+echo "\n";
 
 if($reportStatus->getStatus() === 'success') {
     printf("Start to download report\n");
-    $reportFilename = './report_' . date('YmdHis') . '.pdf';
-    $client->api()->creditRatingNbch()->getPdfReport($reportStatus->getRequestId(), $reportFilename);
-    printf("Report downloaded: %s\n", $reportFilename);
+    $client->api()->creditRatingNbch()->getPdfReport($reportStatus->getRequestId(), $reportSavePath);
+    printf("Report downloaded: %s\n", $reportSavePath);
 } else {
     var_dump($reportStatus);
 }
