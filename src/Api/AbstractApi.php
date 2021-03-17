@@ -43,6 +43,13 @@ abstract class AbstractApi
     /**
      * @param RequestInterface $request
      * @return ResponseInterface
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     * @throws HttpException
      * @throws ClientExceptionInterface
      */
     protected function sendRequest(RequestInterface $request): ResponseInterface

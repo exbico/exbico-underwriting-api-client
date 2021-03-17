@@ -29,7 +29,7 @@ PDF Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210
 
 #### Получение кредитного рейтинга НБКИ - полный цикл (*credit-rating-nbch.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating.php
+API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch.php
 ```
 Ответ:
 ```
