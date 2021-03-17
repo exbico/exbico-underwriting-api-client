@@ -2,44 +2,47 @@
 
 Библиотека для работы с Exbico Underwriting API.
 
-## Примеры использования
+## Использование
 
-#### Запрос на получение кредитного рейтинга НБКИ
-```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/credit-rating-request.php
-```
-Ответ:
-```
-Credit rating NBCH requested with ID: 5158827
-```
+### Инициализация клиента
+```php
+use Exbico\Underwriting\Client;
+use Exbico\Underwriting\ApiSettings;
 
-#### Получение статуса отчета
+$apiSettings = new ApiSettings('EBC_API_TOKEN');
+$client = new Client($apiSettings);
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/report-status.php {REQUEST_ID}
-```
-Ответ:
-```
-Credit rating NBCH requested with ID: 5158827
-```
+### Запрос кредитной истории НБКИ
+```php
+use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 
-#### Сохранение отчета НБКИ
-```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/credit-rating-nbch-download.php {REQUEST_ID}
-```
-Ответ:
-```
-PDF Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210309181819.pdf
-```
+// Паспортные данные
+$document = new DocumentDto();
+$document->setNumber('333222');
+$document->setSeries('6500');
 
+// ФИО
+$person = new PersonDto();
+$person->setFirstname('Иван');
+$person->setLastname('Иванов');
+$person->setMiddlename('Иванович');
 
-#### Получение кредитного рейтинга НБКИ (полный цикл)
+$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document);
+$requestId = $reportStatus->getRequestId(); // 21320130
+$statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php examples/credit-rating.php
+### Получение статуса подготовки отчета
+```php
+$requestId = 21320130;
+$reportStatus = $client->reports()->reportStatus()->getReportStatus($requestId);
+$statusLabel = $reportStatus->getStatus(); // 'success'
 ```
-Ответ:
-```
-Credit rating NBCH requested with ID: 5158826
-Waiting for status change.......
-Start to download report
-Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210309175001.pdf
+### Получение отчета кредитной истории НБКИ
+```php
+// ... Check status of report is 'success' 
+$requestId = 21320130;
+$filename = 'report.pdf';
+$client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename);
+printf("PDF Credit Rating NBCH report downloaded: %s", $filename);
 ```
