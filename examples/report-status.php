@@ -10,5 +10,5 @@ $requestId = $argv[1] ?? null;
 if (is_null($requestId)) {
     throw new InvalidArgumentException("Request ID not provided");
 }
-$reportStatus = $client->api()->reportStatus()->getReportStatus($requestId);
+$reportStatus = $client->reports()->reportStatus()->getReportStatus($requestId);
 printf("Report status: %s\n", $reportStatus->getStatus());

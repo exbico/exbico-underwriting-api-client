@@ -9,5 +9,5 @@ $client = getTestClient();
 $person = getTestPerson();
 $document = getTestDocument();
 
-$reportStatus = $client->api()->creditRatingNbch()->requestReport($person, $document);
+$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document);
 printf("Credit rating NBCH requested with ID: %d\n", $reportStatus->getRequestId());

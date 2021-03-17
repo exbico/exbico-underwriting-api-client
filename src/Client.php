@@ -23,7 +23,7 @@ class Client
         $this->setLogger(new NullLogger());
     }
 
-    public function api(): ApiFactoryInterface
+    public function reports(): ApiFactoryInterface
     {
         return new ApiFactory($this);
     }

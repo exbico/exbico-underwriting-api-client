@@ -15,6 +15,6 @@ final class ClientTest extends TestCase
         self::assertNotNull($this->getClient()->getApiSettings());
         self::assertNotNull($this->getClient()->getHttpClient());
         self::assertNotNull($this->getClient()->getLogger());
-        self::assertNotNull($this->getClient()->api());
+        self::assertNotNull($this->getClient()->reports());
     }
 }
