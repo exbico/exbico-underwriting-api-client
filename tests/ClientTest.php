@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Exbico\Underwriting\Tests\Unit;
+namespace Exbico\Underwriting\Tests;
 
 use Exbico\Underwriting\Tests\Traits\WithClient;
 use PHPUnit\Framework\TestCase;
