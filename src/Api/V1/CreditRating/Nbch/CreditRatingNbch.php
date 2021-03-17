@@ -7,7 +7,13 @@ use Exbico\Underwriting\Api\V1\Api;
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
+use Exbico\Underwriting\Exception\ForbiddenException;
+use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
+use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\ServerErrorException;
+use Exbico\Underwriting\Exception\TooManyRequestsException;
+use Exbico\Underwriting\Exception\UnauthorizedException;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,8 +25,14 @@ class CreditRatingNbch extends Api implements CreditRatingNbchInterface
      * @param PersonDto $person
      * @param DocumentDto $document
      * @return ReportStatusDto
-     * @throws ClientExceptionInterface
      * @throws JsonException
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     * @throws HttpException
+     * @throws ClientExceptionInterface
      */
     public function requestReport(PersonDto $person, DocumentDto $document): ReportStatusDto
     {
@@ -38,6 +50,13 @@ class CreditRatingNbch extends Api implements CreditRatingNbchInterface
      * Download and save NBCH PDF credit rating report
      * @param int $requestId
      * @param string $savePath
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws ReportNotReadyException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     * @throws HttpException
      * @throws ClientExceptionInterface
      */
     public function downloadPdfReport(int $requestId, string $savePath): void
