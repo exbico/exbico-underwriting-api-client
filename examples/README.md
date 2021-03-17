@@ -1,6 +1,6 @@
 # Примеры использования
 
-#### Запрос на получение кредитного рейтинга НБКИ (*credit-rating-request.php*)
+#### Запрос на получение кредитного рейтинга НБКИ (*credit-rating-nbch-request.php*)
 ```
 API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
 ```
@@ -27,7 +27,7 @@ API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} 
 PDF Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210309181819.pdf
 ```
 
-#### Получение кредитного рейтинга НБКИ - полный цикл (*credit-rating.php*)
+#### Получение кредитного рейтинга НБКИ - полный цикл (*credit-rating-nbch.php*)
 ```
 API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating.php
 ```

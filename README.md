@@ -44,5 +44,6 @@ $statusLabel = $reportStatus->getStatus(); // 'success'
 $requestId = 21320130;
 $filename = 'report.pdf';
 $client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename);
-printf("PDF Credit Rating NBCH report downloaded: %s", $filename);
 ```
+
+Примеры использования находятся в папке `examples`.
