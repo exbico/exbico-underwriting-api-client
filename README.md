@@ -17,12 +17,12 @@ $client = new Client($apiSettings);
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 
-// Паспортные данные
+// Document data
 $document = new DocumentDto();
 $document->setNumber('333222');
 $document->setSeries('6500');
 
-// ФИО
+// Person data
 $person = new PersonDto();
 $person->setFirstname('Иван');
 $person->setLastname('Иванов');
@@ -47,3 +47,8 @@ $client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename)
 ```
 
 Примеры использования находятся в папке `examples`.
+
+## Тесты
+```
+./vendor/bin/phpunit tests
+```
