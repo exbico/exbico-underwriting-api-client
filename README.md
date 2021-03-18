@@ -2,6 +2,11 @@
 
 Библиотека для работы с Exbico Underwriting API.
 
+## Установка
+```
+composer require exbico/underwriting-api-client
+```
+
 ## Использование
 
 ### Инициализация клиента
