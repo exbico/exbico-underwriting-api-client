@@ -17,7 +17,7 @@ use Exbico\Underwriting\ApiSettings;
 $apiSettings = new ApiSettings('EBC_API_TOKEN');
 $client = new Client($apiSettings);
 ```
-### Запрос кредитной истории НБКИ
+### Запрос кредитного рейтинга НБКИ по ФИО и паспортным данным
 ```php
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
@@ -37,6 +37,23 @@ $reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $
 $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
+
+### Запрос кредитного рейтинга НБКИ по ID лида и паспортным данным
+```php
+use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
+
+// Document data
+$document = new DocumentDto();
+$document->setNumber('333222');
+$document->setSeries('6500');
+
+$leadId = 12345; // Exbico Lead Id
+
+$reportStatus = $client->reports()->creditRatingNbch()->requestLeadReport($leadId, $document);
+$requestId = $reportStatus->getRequestId(); // 21320130
+$statusLabel = $reportStatus->getStatus(); // 'inProgress'
+```
+
 ### Получение статуса подготовки отчета
 ```php
 $requestId = 21320130;
