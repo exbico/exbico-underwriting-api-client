@@ -18,7 +18,7 @@ use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class CreditRatingNbch extends Api implements CreditRatingNbchInterface
+class CreditRatingNbch extends Api implements CreditRatingNbchInterface, LeadRequestInterface
 {
     /**
      * Order NBCH credit rating report
@@ -41,6 +41,31 @@ class CreditRatingNbch extends Api implements CreditRatingNbchInterface
             'document' => $document->toArray(),
         ]);
         $request = $this->makeRequest('POST', 'credit-rating-nbch')->withBody($requestBody);
+        $response = $this->sendRequest($request);
+        $responseResult = $this->parseResponseResult($response);
+        return new ReportStatusDto($responseResult);
+    }
+
+    /**
+     * @param int $leadId
+     * @param DocumentDto $document
+     * @return ReportStatusDto
+     * @throws ClientExceptionInterface
+     * @throws JsonException
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     * @throws HttpException
+     */
+    public function requestLeadReport(int $leadId, DocumentDto $document): ReportStatusDto
+    {
+        $requestBody = $this->prepareRequestBody([
+            'leadId' => $leadId,
+            'document' => $document->toArray(),
+        ]);
+        $request = $this->makeRequest('POST', 'lead-credit-rating-nbch')->withBody($requestBody);
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
