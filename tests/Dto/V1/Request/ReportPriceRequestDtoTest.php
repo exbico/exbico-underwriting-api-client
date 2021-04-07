@@ -6,7 +6,7 @@ use Exbico\Underwriting\Dto\AbstractDto;
 use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use PHPUnit\Framework\TestCase;
 
-class ReportPriceDtoTest extends TestCase
+class ReportPriceRequestDtoTest extends TestCase
 {
     private const EXAMPLE_REPORT_TYPE = 'credit-rating-nbch';
     private const EXAMPLE_LEAD_ID = 10;
