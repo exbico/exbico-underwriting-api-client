@@ -17,6 +17,19 @@ use Exbico\Underwriting\ApiSettings;
 $apiSettings = new ApiSettings('EBC_API_TOKEN');
 $client = new Client($apiSettings);
 ```
+
+### Получение стоимости отчета
+```php
+use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
+
+$reportPriceRequestDto = new ReportPriceRequestDto();
+$reportPriceRequestDto->setReportType('credit-rating-nbch');
+$reportPriceRequestDto->setLeadId(15);
+
+$reportPriceDto = $client->reports()->reportPrice()->getReportPrice($reportPriceRequestDto);
+$reportPrice = $reportPriceDto->getPrice(); // 100
+```
+
 ### Запрос кредитной истории НБКИ
 ```php
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
