@@ -28,6 +28,18 @@ interface CreditRatingNbchInterface
     public function requestReport(PersonDto $person, DocumentDto $document): ReportStatusDto;
 
     /**
+     * @param int $leadId
+     * @param DocumentDto $document
+     * @return ReportStatusDto
+     * @throws RequestValidationFailedException
+     * @throws UnauthorizedException
+     * @throws ForbiddenException
+     * @throws TooManyRequestsException
+     * @throws ServerErrorException
+     */
+    public function requestLeadReport(int $leadId, DocumentDto $document): ReportStatusDto;
+
+    /**
      * Getting pdf report of credit rating NBCH product
      * @param int $requestId
      * @param string $savePath

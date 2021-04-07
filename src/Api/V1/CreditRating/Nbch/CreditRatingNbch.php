@@ -18,7 +18,7 @@ use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class CreditRatingNbch extends Api implements CreditRatingNbchInterface, LeadRequestInterface
+class CreditRatingNbch extends Api implements CreditRatingNbchInterface
 {
     /**
      * Order NBCH credit rating report
