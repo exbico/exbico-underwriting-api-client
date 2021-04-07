@@ -3,7 +3,7 @@
 namespace Exbico\Underwriting\Tests\Dto\V1\Request;
 
 use Exbico\Underwriting\Dto\AbstractDto;
-use Exbico\Underwriting\Dto\V1\Request\ReportPriceDto;
+use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use PHPUnit\Framework\TestCase;
 
 class ReportPriceDtoTest extends TestCase
@@ -13,7 +13,7 @@ class ReportPriceDtoTest extends TestCase
 
     public function testCreateWithoutConstructor(): void
     {
-        $reportPrice = new ReportPriceDto();
+        $reportPrice = new ReportPriceRequestDto();
         $reportPrice->setReportType(self::EXAMPLE_REPORT_TYPE);
         $reportPrice->setLeadId(self::EXAMPLE_LEAD_ID);
         self::assertInstanceOf(AbstractDto::class, $reportPrice);
@@ -23,7 +23,7 @@ class ReportPriceDtoTest extends TestCase
 
     public function testCreateViaConstructor(): void
     {
-        $reportPrice = new ReportPriceDto([
+        $reportPrice = new ReportPriceRequestDto([
             'reportType' => self::EXAMPLE_REPORT_TYPE,
             'leadId' => self::EXAMPLE_LEAD_ID,
         ]);
