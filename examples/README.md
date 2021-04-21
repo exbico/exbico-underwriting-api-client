@@ -7,6 +7,7 @@ API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} 
 Ответ:
 ```
 Credit rating NBCH requested with ID: 5158827
+Lead credit rating NBCH requested with ID: 5158828
 ```
 
 #### Получение статуса отчета (*report-status.php*)
