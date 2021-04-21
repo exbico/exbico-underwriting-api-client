@@ -18,6 +18,16 @@ API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} 
 Report status: success
 ```
 
+#### Получение цены отчета (*report-price.php*)
+```
+API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price.php
+```
+Ответ:
+```
+Report price: 40
+Report price for lead: 40
+```
+
 #### Получение отчета НБКИ (*credit-rating-nbch-download.php*)
 ```
 API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch-download.php {REQUEST_ID}
