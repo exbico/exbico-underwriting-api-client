@@ -40,7 +40,7 @@ class ReportPrice extends Api implements ReportPriceInterface
 
     protected function prepareRequestBody(array $body): StreamInterface
     {
-        if ($body['leadId'] === null) {
+        if (array_key_exists('leadId', $body) && $body['leadId'] === null) {
             unset($body['leadId']);
         }
         return parent::prepareRequestBody($body);
