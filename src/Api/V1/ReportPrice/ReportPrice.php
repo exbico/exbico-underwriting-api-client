@@ -12,6 +12,7 @@ use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ReportPrice extends Api implements ReportPriceInterface
 {
@@ -34,5 +35,13 @@ class ReportPrice extends Api implements ReportPriceInterface
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
         return new ReportPriceResponseDto($responseResult);
+    }
+
+    protected function prepareRequestBody(array $body): StreamInterface
+    {
+        if (is_null($body['leadId'])) {
+            unset($body['leadId']);
+        }
+        return parent::prepareRequestBody($body);
     }
 }
