@@ -2,7 +2,7 @@
 
 #### Запрос на получение кредитного рейтинга НБКИ (*credit-rating-nbch-request.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
 ```
 Ответ:
 ```
@@ -11,7 +11,7 @@ Credit rating NBCH requested with ID: 5158827
 
 #### Получение статуса отчета (*report-status.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-status.php {REQUEST_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-status.php {REQUEST_ID}
 ```
 Ответ:
 ```
@@ -20,7 +20,7 @@ Report status: success
 
 #### Получение цены отчета (*report-price.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price.php
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price.php
 ```
 Ответ:
 ```
@@ -30,7 +30,7 @@ Report price for lead: 40
 
 #### Получение отчета НБКИ (*credit-rating-nbch-download.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch-download.php {REQUEST_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch-download.php {REQUEST_ID}
 ```
 Ответ:
 ```
@@ -39,7 +39,7 @@ PDF Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210
 
 #### Получение кредитного рейтинга НБКИ - полный цикл (*credit-rating-nbch.php*)
 ```
-API_URL=https://test.app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch.php
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch.php
 ```
 Ответ:
 ```

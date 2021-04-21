@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Exbico\Underwriting\Api\V1\ReportPrice;
 
 use Exbico\Underwriting\Api\V1\Api;
@@ -39,7 +40,7 @@ class ReportPrice extends Api implements ReportPriceInterface
 
     protected function prepareRequestBody(array $body): StreamInterface
     {
-        if (is_null($body['leadId'])) {
+        if ($body['leadId'] === null) {
             unset($body['leadId']);
         }
         return parent::prepareRequestBody($body);

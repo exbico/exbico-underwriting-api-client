@@ -27,7 +27,7 @@ $reportPriceRequestDto->setReportType('credit-rating-nbch');
 $reportPriceRequestDto->setLeadId(15);
 
 $reportPriceDto = $client->reports()->reportPrice()->getReportPrice($reportPriceRequestDto);
-$reportPrice = $reportPriceDto->getPrice(); // 100
+$reportPrice = $reportPriceDto->getPrice();
 ```
 
 ### Запрос кредитной истории НБКИ
