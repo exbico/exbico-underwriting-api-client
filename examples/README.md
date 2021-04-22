@@ -1,8 +1,13 @@
 # Примеры использования
 
 #### Запрос на получение кредитного рейтинга НБКИ (*credit-rating-nbch-request.php*)
+Mac \ Linux:
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-request.php
 ```
 Ответ:
 ```
@@ -11,8 +16,13 @@ Lead credit rating NBCH requested with ID: 5158828
 ```
 
 #### Получение статуса отчета (*report-status.php*)
+Mac \ Linux
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-status.php {REQUEST_ID}
+```
+Windows
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php report-status.php {REQUEST_ID}
 ```
 Ответ:
 ```
@@ -20,8 +30,13 @@ Report status: success
 ```
 
 #### Получение цены отчета (*report-price.php*)
+Mac \ Linux:
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price.php
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php report-price.php
 ```
 Ответ:
 ```
@@ -30,8 +45,13 @@ Report price for lead: 40
 ```
 
 #### Получение отчета НБКИ (*credit-rating-nbch-download.php*)
+Mac \ Linux:
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch-download.php {REQUEST_ID}
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-nbch-download.php {REQUEST_ID}
 ```
 Ответ:
 ```
@@ -39,8 +59,13 @@ PDF Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210
 ```
 
 #### Получение кредитного рейтинга НБКИ - полный цикл (*credit-rating-nbch.php*)
+Mac \ Linux:
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch.php
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-nbch.php
 ```
 Ответ:
 ```
