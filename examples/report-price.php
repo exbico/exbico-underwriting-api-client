@@ -17,5 +17,5 @@ printf("Report price: %s\n", $reportPrice->getPrice());
 $reportPriceWithLeadDto = new ReportPriceRequestDto();
 $reportPriceWithLeadDto->setReportType('credit-rating-nbch');
 $reportPriceWithLeadDto->setLeadId(2000);
-$reportPrice = $client->reports()->reportPrice()->getReportPrice($reportPriceDto);
+$reportPrice = $client->reports()->reportPrice()->getReportPrice($reportPriceWithLeadDto);
 printf("Report price for lead: %s\n", $reportPrice->getPrice());
