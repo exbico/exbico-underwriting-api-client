@@ -65,6 +65,45 @@ class CreditRatingNbchTest extends TestCase
     }
 
     /**
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws Exception
+     */
+    public function testLeadRequestReport(): void
+    {
+        $errorMessageBadRequest = "String too short";
+        $errorMessageForbidden = "Insufficient funds";
+        $requestId = random_int(1, 9999999);
+        $client = $this->getClientWithMockHandler([
+            $this->getRequestReportSuccessfulResponse($requestId),
+            $this->getBadRequestResponse($errorMessageBadRequest),
+            $this->getUnauthorizedResponse(),
+            $this->getForbiddenResponse($errorMessageForbidden),
+            $this->getTooManyRequestsResponse(),
+        ]);
+        $creditRatingNbch = new CreditRatingNbch($client);
+        $leadId = random_int(1, 10000);
+        $document = $this->prepareDocument();
+        // Success request
+        $reportStatus = $creditRatingNbch->requestLeadReport($leadId, $document);
+        self::assertEquals($requestId, $reportStatus->getRequestId());
+        self::assertEquals('inProgress', $reportStatus->getStatus());
+        // Bad request
+        $this->expectException(RequestValidationFailedException::class);
+        $creditRatingNbch->requestLeadReport($leadId, $document);
+        // Unauthorized
+        $this->expectException(UnauthorizedException::class);
+        $creditRatingNbch->requestLeadReport($leadId, $document);
+        // Forbidden
+        $this->expectException(ForbiddenException::class);
+        $this->expectExceptionMessage($errorMessageForbidden);
+        $creditRatingNbch->requestLeadReport($leadId, $document);
+        // Too many requests
+        $this->expectException(TooManyRequestsException::class);
+        $creditRatingNbch->requestLeadReport($leadId, $document);
+    }
+
+    /**
      * @throws ClientExceptionInterface
      * @throws Exception
      */
