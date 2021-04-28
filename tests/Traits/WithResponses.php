@@ -34,6 +34,17 @@ trait WithResponses
         ], JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * @throws JsonException
+     */
+    public function getReportGettingErrorResponse(): ResponseInterface
+    {
+        return new Response(500, [], json_encode([
+            "status" => "failed",
+            "message" => "Report getting error",
+        ], JSON_THROW_ON_ERROR));
+    }
+
     public function getUnauthorizedResponse(): ResponseInterface
     {
         return new Response(401, [], "Wrong token");

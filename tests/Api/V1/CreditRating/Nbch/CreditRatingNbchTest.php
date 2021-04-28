@@ -7,6 +7,7 @@ use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
@@ -118,6 +119,20 @@ class CreditRatingNbchTest extends TestCase
         $creditRatingNbch = new CreditRatingNbch($client);
         $this->expectException(TooManyRequestsException::class);
         $this->expectExceptionMessage('Too many requests');
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+    }
+
+    /**
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     */
+    public function testRequestReportWhenReportGettingError(): void
+    {
+        $client = $this->getClientWithMockHandler([
+            $this->getReportGettingErrorResponse(),
+        ]);
+        $creditRatingNbch = new CreditRatingNbch($client);
+        $this->expectException(ReportGettingErrorException::class);
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
