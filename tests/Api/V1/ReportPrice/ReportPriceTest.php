@@ -6,7 +6,7 @@ use Exbico\Underwriting\Api\V1\ReportPrice\ReportPrice;
 use Exbico\Underwriting\Api\V1\ReportPrice\ReportPriceInterface;
 use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
-use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
 use Exbico\Underwriting\Tests\Traits\WithClient;
@@ -78,7 +78,7 @@ class ReportPriceTest extends TestCase
     {
         $reportPriceRequestDto = new ReportPriceRequestDto();
         $reportPriceRequestDto->setReportType('non-existent-report-type');
-        $this->expectException(RequestValidationFailedException::class);
+        $this->expectException(BadRequestException::class);
         $this->reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 

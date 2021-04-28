@@ -22,6 +22,18 @@ trait WithResponses
         ], JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * @return ResponseInterface
+     * @throws JsonException
+     */
+    public function getNotEnoughMoneyResponse(): ResponseInterface
+    {
+        return new Response(400, [], json_encode([
+            "status" => "failed",
+            "message" => "An error has occurred. Please check you have enough money to get this report.",
+        ], JSON_THROW_ON_ERROR));
+    }
+
     public function getUnauthorizedResponse(): ResponseInterface
     {
         return new Response(401, [], "Wrong token");
@@ -35,18 +47,16 @@ trait WithResponses
     public function getForbiddenResponse(string $message): ResponseInterface
     {
         return new Response(403, [], json_encode([
+            "status" => "failed",
             "message" => $message
         ], JSON_THROW_ON_ERROR));
     }
 
     /**
      * @return ResponseInterface
-     * @throws JsonException
      */
     public function getTooManyRequestsResponse(): ResponseInterface
     {
-        return new Response(423, [], json_encode([
-            "message" => "Too many requests"
-        ], JSON_THROW_ON_ERROR));
+        return new Response(429, [], "Too many requests");
     }
 }

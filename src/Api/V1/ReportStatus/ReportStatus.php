@@ -7,7 +7,7 @@ use Exbico\Underwriting\Api\V1\Api;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
-use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
@@ -21,7 +21,7 @@ class ReportStatus extends Api implements ReportStatusInterface
      * @param int $requestId
      * @return ReportStatusDto
      * @throws JsonException
-     * @throws RequestValidationFailedException
+     * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws TooManyRequestsException
