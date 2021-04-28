@@ -6,6 +6,7 @@ namespace Exbico\Underwriting\Api;
 use Exbico\Underwriting\Client;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -138,6 +139,7 @@ abstract class AbstractApi
      */
     protected function checkForErrors(ResponseInterface $response): void
     {
+        $this->checkForLeadNotDistributedToContract($response);
         $this->checkForBadRequest($response);
         $this->checkForUnauthorized($response);
         $this->checkForForbidden($response);
@@ -226,6 +228,22 @@ abstract class AbstractApi
         if ($response->getStatusCode() === ServerErrorException::HTTP_STATUS) {
             $contents = $this->parseResponseResult($response);
             throw new ServerErrorException($contents['message'] ?? 'Unknown server error');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     */
+    private function checkForLeadNotDistributedToContract(ResponseInterface $response): void
+    {
+
+        $messagePattern = '/Lead with id \d+ was not distributed to your contract/';
+        if($response->getStatusCode() === LeadNotDistributedToContractException::HTTP_STATUS) {
+            $result = $this->parseResponseResult($response);
+            if (isset($result['message']) && preg_match($messagePattern, $result['message'])) {
+                throw new LeadNotDistributedToContractException($result['message']);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ use Exbico\Underwriting\Api\V1\ReportPrice\ReportPriceInterface;
 use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
 use Exbico\Underwriting\Tests\Traits\WithClient;
@@ -41,6 +42,7 @@ class ReportPriceTest extends TestCase
             $this->getUnauthorizedResponse(),
             $this->getForbiddenResponse('Access denied'),
             $this->getTooManyRequestsResponse(),
+            $this->getLeadNotDistributedToContractResponse(),
         ]);
         $this->reportPriceApi = new ReportPrice($client);
     }
@@ -51,65 +53,96 @@ class ReportPriceTest extends TestCase
      */
     public function testGetReportPrice(): void
     {
-        $this->makeCorrectRequest();
-        $this->makeBadRequest();
-        $this->makeUnauthorizedRequest();
-        $this->makeForbiddenRequest();
-        $this->makeTooManyRequest();
-    }
-
-    /**
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     */
-    private function makeCorrectRequest(): void
-    {
+        $client = $this->getClientWithMockHandler([
+            $this->getReportPriceSuccessfulResponse(self::EXAMPLE_REPORT_PRICE),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
         $reportPriceRequestDto = new ReportPriceRequestDto();
         $reportPriceRequestDto->setReportType('credit-rating-nbch');
-        $reportPriceResponseDto = $this->reportPriceApi->getReportPrice($reportPriceRequestDto);
+        $reportPriceResponseDto = $reportPriceApi->getReportPrice($reportPriceRequestDto);
         self::assertEquals(self::EXAMPLE_REPORT_PRICE, $reportPriceResponseDto->getPrice());
     }
 
     /**
-     * @throws ClientExceptionInterface
      * @throws JsonException
+     * @throws ClientExceptionInterface
      */
-    private function makeBadRequest(): void
+    public function testBadRequest(): void
     {
+        $client = $this->getClientWithMockHandler([
+            $this->getBadRequestResponse('Wrong price format'),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
         $reportPriceRequestDto = new ReportPriceRequestDto();
         $reportPriceRequestDto->setReportType('non-existent-report-type');
         $this->expectException(BadRequestException::class);
-        $this->reportPriceApi->getReportPrice($reportPriceRequestDto);
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 
     /**
-     * @throws ClientExceptionInterface
      * @throws JsonException
+     * @throws ClientExceptionInterface
      */
-    private function makeUnauthorizedRequest(): void
+    public function testWhenUnauthorized(): void
     {
+        $client = $this->getClientWithMockHandler([
+            $this->getUnauthorizedResponse(),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('credit-rating-nbch');
         $this->expectException(UnauthorizedException::class);
-        $this->makeCorrectRequest();
+        $this->expectExceptionMessage('Wrong token');
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 
     /**
-     * @throws ClientExceptionInterface
      * @throws JsonException
+     * @throws ClientExceptionInterface
      */
-    private function makeForbiddenRequest(): void
+    public function testWhenForbidden(): void
     {
+        $client = $this->getClientWithMockHandler([
+            $this->getForbiddenResponse('Access denied'),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('credit-rating-nbch');
         $this->expectException(ForbiddenException::class);
-        $this->makeCorrectRequest();
+        $this->expectExceptionMessage('Access denied');
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
+    }
+
+    /**
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     */
+    public function testWhenTooManyRequests(): void
+    {
+        $client = $this->getClientWithMockHandler([
+            $this->getTooManyRequestsResponse(),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('credit-rating-nbch');
+        $this->expectException(TooManyRequestsException::class);
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 
     /**
      * @throws ClientExceptionInterface
      * @throws JsonException
      */
-    private function makeTooManyRequest(): void
+    public function testWhenLeadNotDistributedToContract(): void
     {
-        $this->expectException(TooManyRequestsException::class);
-        $this->makeCorrectRequest();
+        $client = $this->getClientWithMockHandler([
+            $this->getLeadNotDistributedToContractResponse(),
+        ]);
+        $reportPriceApi = new ReportPrice($client);
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('credit-rating-nbch');
+        $this->expectException(LeadNotDistributedToContractException::class);
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 
     /**

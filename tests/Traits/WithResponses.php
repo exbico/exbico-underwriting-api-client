@@ -59,4 +59,16 @@ trait WithResponses
     {
         return new Response(429, [], "Too many requests");
     }
+
+    /**
+     * @return ResponseInterface
+     * @throws JsonException
+     */
+    public function getLeadNotDistributedToContractResponse(): ResponseInterface
+    {
+        return new Response(400, [], json_encode([
+            "status" => "failed",
+            "message" => "Lead with id 132932 was not distributed to your contract."
+        ], JSON_THROW_ON_ERROR));
+    }
 }
