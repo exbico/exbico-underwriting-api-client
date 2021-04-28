@@ -237,9 +237,8 @@ abstract class AbstractApi
      */
     private function checkForLeadNotDistributedToContract(ResponseInterface $response): void
     {
-
-        $messagePattern = '/Lead with id \d+ was not distributed to your contract/';
         if($response->getStatusCode() === LeadNotDistributedToContractException::HTTP_STATUS) {
+            $messagePattern = '/Lead with id \d+ was not distributed to your contract/';
             $result = $this->parseResponseResult($response);
             if (isset($result['message']) && preg_match($messagePattern, $result['message'])) {
                 throw new LeadNotDistributedToContractException($result['message']);

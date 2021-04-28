@@ -64,7 +64,7 @@ class CreditRatingNbchTest extends TestCase
      */
     public function testRequestReportWhenRequestIsBad(): void
     {
-        $errorMessage = 'String is to short';
+        $errorMessage = 'String is too short';
         $client = $this->getClientWithMockHandler([
             $this->getBadRequestResponse($errorMessage),
         ]);
@@ -164,7 +164,7 @@ class CreditRatingNbchTest extends TestCase
     public function testRequestLeadReportWhenRequestIsBad(): void
     {
         $leadId = random_int(1, 9999999);
-        $errorMessage = 'String is to short';
+        $errorMessage = 'String is too short';
         $client = $this->getClientWithMockHandler([
             $this->getBadRequestResponse($errorMessage),
         ]);
