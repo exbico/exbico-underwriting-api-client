@@ -7,7 +7,7 @@ use Exbico\Underwriting\Api\V1\Api;
 use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportPriceResponseDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
-use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
@@ -20,7 +20,7 @@ class ReportPrice extends Api implements ReportPriceInterface
     /**
      * @param ReportPriceRequestDto $reportPriceDto
      * @return ReportPriceResponseDto
-     * @throws RequestValidationFailedException
+     * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws TooManyRequestsException

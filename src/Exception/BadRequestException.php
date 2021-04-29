@@ -5,7 +5,7 @@ namespace Exbico\Underwriting\Exception;
 
 use Throwable;
 
-class RequestValidationFailedException extends HttpException
+class BadRequestException extends HttpException
 {
     public const HTTP_STATUS = 400;
 

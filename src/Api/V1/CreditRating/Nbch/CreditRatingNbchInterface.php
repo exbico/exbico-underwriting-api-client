@@ -7,7 +7,7 @@ use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
-use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
@@ -18,12 +18,12 @@ interface CreditRatingNbchInterface
      * Ordering credit rating NBCH product
      * @param PersonDto $person
      * @param DocumentDto $document
-     * @throws RequestValidationFailedException
+     * @return ReportStatusDto
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws TooManyRequestsException
      * @throws ServerErrorException
-     * @return ReportStatusDto
+     * @throws BadRequestException
      */
     public function requestReport(PersonDto $person, DocumentDto $document): ReportStatusDto;
 
@@ -31,7 +31,7 @@ interface CreditRatingNbchInterface
      * @param int $leadId
      * @param DocumentDto $document
      * @return ReportStatusDto
-     * @throws RequestValidationFailedException
+     * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws TooManyRequestsException

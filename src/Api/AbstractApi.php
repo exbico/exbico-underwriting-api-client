@@ -6,8 +6,9 @@ namespace Exbico\Underwriting\Api;
 use Exbico\Underwriting\Client;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
-use Exbico\Underwriting\Exception\RequestValidationFailedException;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
@@ -43,7 +44,7 @@ abstract class AbstractApi
     /**
      * @param RequestInterface $request
      * @return ResponseInterface
-     * @throws RequestValidationFailedException
+     * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws NotFoundException
@@ -51,6 +52,7 @@ abstract class AbstractApi
      * @throws ServerErrorException
      * @throws HttpException
      * @throws ClientExceptionInterface
+     * @throws JsonException
      */
     protected function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -101,6 +103,7 @@ abstract class AbstractApi
      */
     protected function parseResponseResult(ResponseInterface $response): array
     {
+        $response->getBody()->rewind();
         return json_decode(
             $response->getBody()->getContents(),
             true, 512,
@@ -125,37 +128,121 @@ abstract class AbstractApi
 
     /**
      * @param ResponseInterface $response
-     * @throws RequestValidationFailedException
+     * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws NotFoundException
      * @throws TooManyRequestsException
      * @throws ServerErrorException
      * @throws HttpException
+     * @throws JsonException
      */
     protected function checkForErrors(ResponseInterface $response): void
     {
-        switch ($response->getStatusCode()) {
-            case 200:
-            case 201:
-            case 202:
-            case 203:
-            case 204:
-                break;
-            case RequestValidationFailedException::HTTP_STATUS:
-                throw new RequestValidationFailedException($response->getBody()->getContents());
-            case UnauthorizedException::HTTP_STATUS:
-                throw new UnauthorizedException($response->getBody()->getContents());
-            case ForbiddenException::HTTP_STATUS:
-                throw new ForbiddenException($response->getBody()->getContents());
-            case NotFoundException::HTTP_STATUS:
-                throw new NotFoundException($response->getBody()->getContents());
-            case TooManyRequestsException::HTTP_STATUS:
-                throw new TooManyRequestsException($response->getBody()->getContents());
-            case ServerErrorException::HTTP_STATUS:
-                throw new ServerErrorException($response->getBody()->getContents());
-            default:
-                throw new HttpException($response->getBody()->getContents(), $response->getStatusCode());
+        $this->checkForLeadNotDistributedToContract($response);
+        $this->checkForBadRequest($response);
+        $this->checkForUnauthorized($response);
+        $this->checkForForbidden($response);
+        $this->checkForNotFound($response);
+        $this->checkForTooManyRequests($response);
+        $this->checkForServerError($response);
+        if (!$this->isResponseSuccess($response)) {
+            throw new HttpException($response->getBody()->getContents(), $response->getStatusCode());
+        }
+    }
+
+    private function isResponseSuccess(ResponseInterface $response): bool
+    {
+        return $response->getStatusCode() >= 200
+            && $response->getStatusCode() <= 204;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     * @throws BadRequestException
+     */
+    private function checkForBadRequest(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === BadRequestException::HTTP_STATUS) {
+            $result = $this->parseResponseResult($response);
+            throw new BadRequestException($result['message'] ?? 'Unknown error');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws UnauthorizedException
+     */
+    private function checkForUnauthorized(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === UnauthorizedException::HTTP_STATUS) {
+            throw new UnauthorizedException($response->getBody()->getContents());
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     * @throws BadRequestException
+     */
+    private function checkForForbidden(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === ForbiddenException::HTTP_STATUS) {
+            $contents = $this->parseResponseResult($response);
+            throw new ForbiddenException($contents['message'] ?? 'Forbidden error');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     * @throws NotFoundException
+     */
+    private function checkForNotFound(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === NotFoundException::HTTP_STATUS) {
+            $contents = $this->parseResponseResult($response);
+            throw new NotFoundException($contents['message'] ?? 'Not found');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws TooManyRequestsException
+     */
+    private function checkForTooManyRequests(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === TooManyRequestsException::HTTP_STATUS) {
+            throw new TooManyRequestsException('Too many requests');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     * @throws ServerErrorException
+     */
+    private function checkForServerError(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() === ServerErrorException::HTTP_STATUS) {
+            $contents = $this->parseResponseResult($response);
+            throw new ServerErrorException($contents['message'] ?? 'Unknown server error');
+        }
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws JsonException
+     */
+    private function checkForLeadNotDistributedToContract(ResponseInterface $response): void
+    {
+        if($response->getStatusCode() === LeadNotDistributedToContractException::HTTP_STATUS) {
+            $messagePattern = '/Lead with id \d+ was not distributed to your contract/';
+            $result = $this->parseResponseResult($response);
+            if (isset($result['message']) && preg_match($messagePattern, $result['message'])) {
+                throw new LeadNotDistributedToContractException($result['message']);
+            }
         }
     }
 }
