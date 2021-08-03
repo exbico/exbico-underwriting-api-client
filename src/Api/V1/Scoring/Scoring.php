@@ -14,7 +14,6 @@ use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
 use InvalidArgumentException;
-use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use RuntimeException;
 
@@ -31,7 +30,6 @@ class Scoring extends ReportApi implements ScoringInterface
      * @throws TooManyRequestsException
      * @throws UnauthorizedException
      * @throws InvalidArgumentException
-     * @throws JsonException
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
@@ -58,9 +56,7 @@ class Scoring extends ReportApi implements ScoringInterface
      * @throws ServerErrorException
      * @throws HttpException
      * @throws ClientExceptionInterface
-     * @throws JsonException
      * @throws RuntimeException
-     * @throws InvalidArgumentException
      */
     public function downloadPdfReport(int $requestId, string $savePath): void
     {

@@ -9,6 +9,8 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\RequestPreparationException;
+use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
@@ -16,11 +18,13 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use GuzzleHttp\Psr7\Utils;
+use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 abstract class AbstractApi
 {
@@ -45,25 +49,30 @@ abstract class AbstractApi
      * @param RequestInterface $request
      * @return ResponseInterface
      * @throws BadRequestException
-     * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws NotFoundException
-     * @throws TooManyRequestsException
-     * @throws ServerErrorException
      * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws RequestPreparationException
      * @throws ClientExceptionInterface
-     * @throws JsonException
+     * @throws ResponseParsingException
      */
     protected function sendRequest(RequestInterface $request): ResponseInterface
     {
-        $baseUri = $this->getBaseUri();
-        $request = $this->signRequest($request)
-            ->withHeader('User-Agent', self::HEADER_USER_AGENT)
-            ->withUri(UriResolver::resolve($baseUri, $request->getUri()));
-        $this->getClient()->getLogger()->debug('Send request', [
-            'url' => (string)$request->getUri(),
-            'body' => $request->getBody()->getContents()
-        ]);
+        try {
+            $baseUri = $this->getBaseUri();
+            $request = $this->signRequest($request)
+                ->withHeader('User-Agent', self::HEADER_USER_AGENT)
+                ->withUri(UriResolver::resolve($baseUri, $request->getUri()));
+            $this->getClient()->getLogger()->debug('Send request', [
+                'url' => (string)$request->getUri(),
+                'body' => $request->getBody()->getContents()
+            ]);
+        } catch (InvalidArgumentException | RuntimeException $exception) {
+            throw new RequestPreparationException($exception->getMessage(), $exception->getCode(), $exception);
+        }
         $response = $this->getClient()->getHttpClient()->sendRequest($request);
         $this->getClient()->getLogger()->debug('Receive response', [
             'status' => $response->getStatusCode(),
@@ -72,13 +81,20 @@ abstract class AbstractApi
         return $response;
     }
 
+    /**
+     * @throws ResponseParsingException
+     */
     protected function download(ResponseInterface $response, string $savePath): void
     {
-        $fh = fopen($savePath, 'wb+');
-        while ($response->getBody()->eof() === false) {
-            fwrite($fh, $response->getBody()->read(8192));
+        try {
+            $fh = fopen($savePath, 'wb+');
+            while ($response->getBody()->eof() === false) {
+                fwrite($fh, $response->getBody()->read(8192));
+            }
+            fclose($fh);
+        } catch (RuntimeException $exception) {
+            throw new ResponseParsingException('Unable to read stream', $exception->getCode(), $exception);
         }
-        fclose($fh);
     }
 
     protected function makeRequest(string $method, string $path): RequestInterface
@@ -89,28 +105,48 @@ abstract class AbstractApi
     /**
      * @param array $body
      * @return StreamInterface
-     * @throws JsonException
+     * @throws RequestPreparationException
      */
     protected function prepareRequestBody(array $body): StreamInterface
     {
-        return Utils::streamFor(json_encode($body, JSON_THROW_ON_ERROR));
+        try {
+            return Utils::streamFor(json_encode($body, JSON_THROW_ON_ERROR));
+        } catch (InvalidArgumentException | JsonException $exception) {
+            throw new RequestPreparationException(
+                'Request preparation error',
+                $exception->getCode(),
+                $exception
+            );
+        }
     }
 
     /**
      * @param ResponseInterface $response
      * @return array
-     * @throws JsonException
+     * @throws ResponseParsingException
      */
     protected function parseResponseResult(ResponseInterface $response): array
     {
-        $response->getBody()->rewind();
-        return json_decode(
-            $response->getBody()->getContents(),
-            true, 512,
-            JSON_THROW_ON_ERROR
-        );
+        try {
+            $response->getBody()->rewind();
+            return json_decode(
+                $response->getBody()->getContents(),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
+        } catch (RuntimeException | JsonException $exception) {
+            throw new ResponseParsingException(
+                'Unable to parse response',
+                $exception->getCode(),
+                $exception
+            );
+        }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function getBaseUri(): Uri
     {
         return (new Uri($this->getClient()->getApiSettings()->getBaseUrl()))
@@ -120,6 +156,9 @@ abstract class AbstractApi
                 ]) . '/');
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function signRequest(RequestInterface $request): RequestInterface
     {
         $token = $this->getClient()->getApiSettings()->getToken();
@@ -135,7 +174,7 @@ abstract class AbstractApi
      * @throws TooManyRequestsException
      * @throws ServerErrorException
      * @throws HttpException
-     * @throws JsonException
+     * @throws ResponseParsingException
      */
     protected function checkForErrors(ResponseInterface $response): void
     {
@@ -147,7 +186,7 @@ abstract class AbstractApi
         $this->checkForTooManyRequests($response);
         $this->checkForServerError($response);
         if (!$this->isResponseSuccess($response)) {
-            throw new HttpException($response->getBody()->getContents(), $response->getStatusCode());
+            throw new HttpException('Unknown API response', $response->getStatusCode());
         }
     }
 
@@ -159,8 +198,8 @@ abstract class AbstractApi
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
      * @throws BadRequestException
+     * @throws ResponseParsingException
      */
     private function checkForBadRequest(ResponseInterface $response): void
     {
@@ -173,18 +212,28 @@ abstract class AbstractApi
     /**
      * @param ResponseInterface $response
      * @throws UnauthorizedException
+     * @throws ResponseParsingException
      */
     private function checkForUnauthorized(ResponseInterface $response): void
     {
         if ($response->getStatusCode() === UnauthorizedException::HTTP_STATUS) {
-            throw new UnauthorizedException($response->getBody()->getContents());
+            try {
+                $contents = $response->getBody()->getContents();
+            } catch (RuntimeException $exception) {
+                throw new ResponseParsingException(
+                    'Unable to parse response',
+                    $exception->getCode(),
+                    $exception
+                );
+            }
+            throw new UnauthorizedException($contents);
         }
     }
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
-     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws ResponseParsingException
      */
     private function checkForForbidden(ResponseInterface $response): void
     {
@@ -196,8 +245,8 @@ abstract class AbstractApi
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
      * @throws NotFoundException
+     * @throws ResponseParsingException
      */
     private function checkForNotFound(ResponseInterface $response): void
     {
@@ -220,8 +269,8 @@ abstract class AbstractApi
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
      * @throws ServerErrorException
+     * @throws ResponseParsingException
      */
     private function checkForServerError(ResponseInterface $response): void
     {
@@ -233,11 +282,12 @@ abstract class AbstractApi
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
+     * @throws LeadNotDistributedToContractException
+     * @throws ResponseParsingException
      */
     private function checkForLeadNotDistributedToContract(ResponseInterface $response): void
     {
-        if($response->getStatusCode() === LeadNotDistributedToContractException::HTTP_STATUS) {
+        if ($response->getStatusCode() === LeadNotDistributedToContractException::HTTP_STATUS) {
             $messagePattern = '/Lead with id \d+ was not distributed to your contract/';
             $result = $this->parseResponseResult($response);
             if (isset($result['message']) && preg_match($messagePattern, $result['message'])) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Exbico\Underwriting\Tests\Api\V1\Scoring;
 
 use Exbico\Underwriting\Api\V1\Scoring\Scoring;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Tests\Traits\WithClient;
 use Exbico\Underwriting\Tests\Traits\WithResponses;
@@ -45,7 +46,8 @@ class ScoringTest extends TestCase
         $bytes = random_bytes(16384);
         $client = $this->getClientWithMockHandler([
             $this->getDownloadReportSuccessfulResponse($bytes),
-            $this->getReportNotReadyYetResponse()
+            $this->getReportNotReadyYetResponse(),
+            $this->getReportGettingErrorResponse(),
         ]);
         $scoring = new Scoring($client);
         $tempFilename = tempnam(sys_get_temp_dir(), 'pdf');
@@ -55,5 +57,8 @@ class ScoringTest extends TestCase
         // Report not ready
         $this->expectException(ReportNotReadyException::class);
         $scoring->downloadPdfReport(1, 'test.pdf');
+        // Report getting error
+        $this->expectException(ReportGettingErrorException::class);
+        $scoring->downloadPdfReport(-1, 'test.pdf');
     }
 }
