@@ -38,7 +38,7 @@ class Scoring extends ReportApi implements ScoringInterface
         $requestBody = $this->prepareRequestBody([
             'leadId' => $leadId
         ]);
-        $request = $this->makeRequest('POST', 'lead-score')->withBody($requestBody);
+        $request = $this->makeRequest('POST', 'lead-scoring')->withBody($requestBody);
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
@@ -60,7 +60,7 @@ class Scoring extends ReportApi implements ScoringInterface
      */
     public function downloadPdfReport(int $requestId, string $savePath): void
     {
-        $path = sprintf('lead-scoring/%d/pdf', $requestId);
+        $path = sprintf('scoring/%d/pdf', $requestId);
         $request = $this->makeRequest('GET', $path);
         $response = $this->sendRequest($request);
         $this->download($response, $savePath);
