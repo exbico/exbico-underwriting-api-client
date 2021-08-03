@@ -1,17 +1,16 @@
 <?php
 require_once __DIR__ . '/bootstrap/bootstrap.php';
 
-/*****************************************/
-/**** FULL NBCH CREDIT RATING PROCESS ****/
-/*****************************************/
+/******************************/
+/**** FULL SCORING PROCESS ****/
+/******************************/
 
 $client = getTestClient();
-$person = getTestPerson();
-$document = getTestDocument();
+$leadId = random_int(1, 999999);
 $reportSavePath = __DIR__ . DIRECTORY_SEPARATOR . 'report_' .  date('YmdHis') . '.pdf';
 
-$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document);
-printf('Credit rating NBCH requested with ID: %d' . PHP_EOL, $reportStatus->getRequestId());
+$reportStatus = $client->reports()->scoring()->requestLeadReport($leadId);
+printf('Scoring requested with ID: %d' . PHP_EOL, $reportStatus->getRequestId());
 printf('Waiting for status change' . PHP_EOL);
 while ($reportStatus->getStatus() === 'inProgress') {
     sleep(5);
