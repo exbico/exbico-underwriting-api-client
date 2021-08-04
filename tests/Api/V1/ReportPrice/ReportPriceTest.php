@@ -91,6 +91,21 @@ class ReportPriceTest extends TestCase
         $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws Exception
+     */
     public function testGetReportPriceWhenLeadNotDistributedToContract(): void
     {
         $reportPriceApi = new ReportPrice($this->getClientWithMockHandler([
