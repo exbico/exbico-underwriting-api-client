@@ -92,14 +92,6 @@ $filename = 'report.pdf';
 $client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename);
 ```
 
-### Получение отчета кредитной истории НБКИ
-```php
-// ... Check status of report is 'success' 
-$requestId = 21320130;
-$filename = 'report.pdf';
-$client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename);
-```
-
 ### Получение отчета по продукту "Скоринг"
 ```php
 // ... Check status of report is 'success' 
