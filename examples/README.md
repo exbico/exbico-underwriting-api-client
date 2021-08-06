@@ -1,13 +1,29 @@
 # Примеры использования
 
-#### Запрос на получение кредитного рейтинга НБКИ (*credit-rating-nbch-request.php*)
+#### Запрос на получение кредитного рейтинга НБКИ по ID лида (*credit-rating-nbch-request-for-lead.php*)
 Mac \ Linux:
 ```
-API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php {LEAD_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request-for-lead.php {LEAD_ID}
 ```
 Windows:
 ```
-set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-request.php {LEAD_ID}
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-request-for-lead.php {LEAD_ID}
+```
+Ответ:
+```
+Credit rating NBCH requested with ID: 5158827
+Lead credit rating NBCH requested with ID: 5158828
+```
+
+
+#### Запрос на получение кредитного рейтинга НБКИ по данным субьекта (*credit-rating-nbch-request.php*)
+Mac \ Linux:
+```
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-request.php
 ```
 Ответ:
 ```
