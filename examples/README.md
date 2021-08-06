@@ -16,7 +16,7 @@ Lead credit rating NBCH requested with ID: 5158828
 ```
 
 
-#### Запрос на получение кредитного рейтинга НБКИ по данным субьекта (*credit-rating-nbch-request.php*)
+#### Запрос на получение кредитного рейтинга НБКИ по данным субъекта (*credit-rating-nbch-request.php*)
 Mac \ Linux:
 ```
 API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request.php
@@ -45,19 +45,33 @@ set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_T
 Report status: success
 ```
 
-#### Получение цены отчета НБКИ (*report-price-nbch.php*)
+
+#### Получение цены отчета НБКИ по ID лида (*report-price-nbch-for-lead.php*)
 Mac \ Linux:
 ```
-API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price-nbch.php {LEAD_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price-nbch-for-lead.php {LEAD_ID}
 ```
 Windows:
 ```
-set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php report-price-nbch.php {LEAD_ID}
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php report-price-nbch-for-lead.php {LEAD_ID}
+```
+Ответ:
+```
+Report price for lead: 0
+```
+
+#### Получение цены отчета НБКИ (*report-price-nbch.php*)
+Mac \ Linux:
+```
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php report-price-nbch.php
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php report-price-nbch.php
 ```
 Ответ:
 ```
 Report price: 40
-Report price for lead: 40
 ```
 
 #### Получение цены продукта "Скоринг" (*report-price-scoring.php*)
