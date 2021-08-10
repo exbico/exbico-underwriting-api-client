@@ -5,6 +5,6 @@ namespace Exbico\Underwriting\Exception;
 
 use RuntimeException;
 
-class HttpException extends RuntimeException
+class RequestPreparationException extends RuntimeException
 {
 }

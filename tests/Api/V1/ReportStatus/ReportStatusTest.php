@@ -52,9 +52,9 @@ class ReportStatusTest extends TestCase
      */
     private function getReportStatusResponse(string $status, int $requestId): ResponseInterface
     {
-        return new Response(200, [], json_encode([
-            "requestId" => $requestId,
-            "status" => $status,
-        ], JSON_THROW_ON_ERROR));
+        return new Response(200, [], json_encode(compact(
+            'requestId',
+            'status'
+        ), JSON_THROW_ON_ERROR));
     }
 }

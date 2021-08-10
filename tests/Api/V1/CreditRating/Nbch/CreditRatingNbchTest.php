@@ -6,155 +6,238 @@ use Exbico\Underwriting\Api\V1\CreditRating\Nbch\CreditRatingNbch;
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
+use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
+use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\RequestPreparationException;
+use Exbico\Underwriting\Exception\ResponseParsingException;
+use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
 use Exbico\Underwriting\Tests\Traits\WithClient;
 use Exbico\Underwriting\Tests\Traits\WithResponses;
 use Exception;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Utils;
+use InvalidArgumentException;
 use JsonException;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 class CreditRatingNbchTest extends TestCase
 {
     use WithClient;
     use WithResponses;
 
+    private const BAD_REQUEST_MESSAGE       = 'String is too short';
+    private const FORBIDDEN_REQUEST_MESSAGE = 'Access denied';
+
     /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
      * @throws JsonException
+     * @throws ExpectationFailedException
      * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function testRequestReportSuccess(): void
+    public function testRequestReport(): void
     {
         $requestId = random_int(1, 9999999);
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getRequestReportSuccessfulResponse($requestId),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $reportStatus = $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
     }
 
     /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
      * @throws JsonException
      * @throws ClientExceptionInterface
+     * @throws RuntimeException
      */
     public function testRequestReportWhenNotEnoughMoney(): void
     {
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getNotEnoughMoneyResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
     /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
      * @throws JsonException
      * @throws ClientExceptionInterface
+     * @throws RuntimeException
      */
-    public function testRequestReportWhenRequestIsBad(): void
+    public function testRequestReportWhenBadRequest(): void
     {
-        $errorMessage = 'String is too short';
-        $client = $this->getClientWithMockHandler([
-            $this->getBadRequestResponse($errorMessage),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getBadRequestResponse(self::BAD_REQUEST_MESSAGE),
+        ]));
         $this->expectException(BadRequestException::class);
-        $this->expectExceptionMessage($errorMessage);
+        $this->expectExceptionMessage(self::BAD_REQUEST_MESSAGE);
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
-
     }
 
     /**
-     * @throws JsonException
+     * @throws BadRequestException
+     * @throws TooManyRequestsException
+     * @throws RuntimeException
+     * @throws ForbiddenException
      * @throws ClientExceptionInterface
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws ServerErrorException
+     * @throws NotFoundException
      */
     public function testRequestReportWhenUnauthorized(): void
     {
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getUnauthorizedResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('Wrong token');
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
     /**
+     * @throws UnauthorizedException
+     * @throws BadRequestException
+     * @throws TooManyRequestsException
      * @throws JsonException
+     * @throws RuntimeException
      * @throws ClientExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws HttpException
+     * @throws ServerErrorException
+     * @throws NotFoundException
      */
-    public function testRequestReportWhenAccessDenied(): void
+    public function testRequestReportWhenForbidden(): void
     {
-        $errorMessage = 'Access denied';
-        $client = $this->getClientWithMockHandler([
-            $this->getForbiddenResponse($errorMessage),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getForbiddenResponse(self::FORBIDDEN_REQUEST_MESSAGE),
+        ]));
         $this->expectException(ForbiddenException::class);
-        $this->expectExceptionMessage($errorMessage);
+        $this->expectExceptionMessage(self::FORBIDDEN_REQUEST_MESSAGE);
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
     /**
-     * @throws JsonException
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws RuntimeException
+     * @throws ForbiddenException
      * @throws ClientExceptionInterface
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws ServerErrorException
+     * @throws NotFoundException
      */
     public function testRequestReportWhenTooManyRequests(): void
     {
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getTooManyRequestsResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $this->expectException(TooManyRequestsException::class);
         $this->expectExceptionMessage('Too many requests');
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
     /**
-     * @throws JsonException
+     * @throws BadRequestException
+     * @throws RequestPreparationException
+     * @throws ForbiddenException
      * @throws ClientExceptionInterface
-     */
-    public function testRequestReportWhenReportGettingError(): void
-    {
-        $client = $this->getClientWithMockHandler([
-            $this->getReportGettingErrorResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
-        $this->expectException(ReportGettingErrorException::class);
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
-    }
-
-    /**
+     * @throws InvalidArgumentException
+     * @throws UnauthorizedException
+     * @throws ExpectationFailedException
+     * @throws ResponseParsingException
+     * @throws TooManyRequestsException
      * @throws JsonException
-     * @throws ClientExceptionInterface
+     * @throws NotEnoughMoneyException
+     * @throws InvalidArgumentException
+     * @throws HttpException
+     * @throws ServerErrorException
      * @throws Exception
      */
-    public function testRequestLeadReportSuccess(): void
+    public function testRequestLeadReport(): void
     {
         $requestId = random_int(1, 9999999);
         $leadId = random_int(1, 9999999);
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getRequestReportSuccessfulResponse($requestId),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $reportStatus = $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
     }
 
     /**
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws TooManyRequestsException
+     * @throws JsonException
+     * @throws ForbiddenException
+     * @throws ClientExceptionInterface
+     * @throws NotEnoughMoneyException
+     * @throws InvalidArgumentException
+     * @throws HttpException
+     * @throws ServerErrorException
+     * @throws Exception
+     */
+    public function testRequestLeadReportWhenLeadNotDistributed(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getLeadNotDistributedToContractResponse(),
+        ]));
+        $this->expectException(LeadNotDistributedToContractException::class);
+        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotEnoughMoneyException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
      * @throws JsonException
      * @throws ClientExceptionInterface
      * @throws Exception
@@ -162,129 +245,83 @@ class CreditRatingNbchTest extends TestCase
     public function testRequestLeadReportWhenNotEnoughMoney(): void
     {
         $leadId = random_int(1, 9999999);
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getNotEnoughMoneyResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
         $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
     }
 
     /**
-     * @throws Exception
-     * @throws JsonException
+     * @throws BadRequestException
+     * @throws RequestPreparationException
+     * @throws ForbiddenException
      * @throws ClientExceptionInterface
-     */
-    public function testRequestLeadReportWhenRequestIsBad(): void
-    {
-        $leadId = random_int(1, 9999999);
-        $errorMessage = 'String is too short';
-        $client = $this->getClientWithMockHandler([
-            $this->getBadRequestResponse($errorMessage),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
-        $this->expectException(BadRequestException::class);
-        $this->expectExceptionMessage($errorMessage);
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
-    }
-
-    /**
-     * @throws Exception
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     */
-    public function testRequestLeadReportWhenUnauthorized(): void
-    {
-        $leadId = random_int(1, 9999999);
-        $client = $this->getClientWithMockHandler([
-            $this->getUnauthorizedResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
-        $this->expectException(UnauthorizedException::class);
-        $this->expectExceptionMessage('Wrong token');
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
-    }
-
-    /**
-     * @throws Exception
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     */
-    public function testRequestLeadReportWhenAccessDenied(): void
-    {
-        $leadId = random_int(1, 9999999);
-        $errorMessage = 'Access denied';
-        $client = $this->getClientWithMockHandler([
-            $this->getForbiddenResponse($errorMessage),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
-        $this->expectException(ForbiddenException::class);
-        $this->expectExceptionMessage($errorMessage);
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
-    }
-
-    /**
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @throws Exception
-     */
-    public function testRequestLeadReportWhenTooManyRequests(): void
-    {
-        $leadId = random_int(1, 9999999);
-        $client = $this->getClientWithMockHandler([
-            $this->getTooManyRequestsResponse(),
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
-        $this->expectException(TooManyRequestsException::class);
-        $this->expectExceptionMessage('Too many requests');
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
-    }
-
-    /**
-     * @throws ClientExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws ExpectationFailedException
+     * @throws ResponseParsingException
+     * @throws TooManyRequestsException
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws ServerErrorException
      * @throws Exception
      */
     public function testDownloadReport(): void
     {
         $bytes = random_bytes(16384);
-        $client = $this->getClientWithMockHandler([
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getDownloadReportSuccessfulResponse($bytes),
-            $this->getReportNotReadyYetResponse()
-        ]);
-        $creditRatingNbch = new CreditRatingNbch($client);
+        ]));
         $tempFilename = tempnam(sys_get_temp_dir(), 'pdf');
         $creditRatingNbch->downloadPdfReport(1, $tempFilename);
         self::assertEquals($bytes, file_get_contents($tempFilename));
         unlink($tempFilename);
-        // Report not ready
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws ClientExceptionInterface
+     */
+    public function testDownloadReportWhenReportNotReadyYet(): void
+    {
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getReportNotReadyYetResponse(),
+        ]));
         $this->expectException(ReportNotReadyException::class);
         $creditRatingNbch->downloadPdfReport(1, 'test.pdf');
     }
 
     /**
-     * @param int $requestId
-     * @return Response
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws TooManyRequestsException
      * @throws JsonException
+     * @throws ForbiddenException
+     * @throws ClientExceptionInterface
+     * @throws HttpException
+     * @throws ServerErrorException
+     * @throws NotFoundException
      */
-    private function getRequestReportSuccessfulResponse(int $requestId): ResponseInterface
+    public function testDownloadReportWhenReportGettingError(): void
     {
-        return new Response(200, [], json_encode([
-            "requestId" => $requestId,
-            "status" => "inProgress"
-        ], JSON_THROW_ON_ERROR));
-    }
-
-    private function getDownloadReportSuccessfulResponse($resource): ResponseInterface
-    {
-        return new Response(200, [
-            'Content-Type' => 'application/pdf',
-        ], Utils::streamFor($resource));
-    }
-
-    private function getReportNotReadyYetResponse(): ResponseInterface
-    {
-        return new Response(422, [], "Report not ready");
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getReportGettingErrorResponse(),
+        ]));
+        $this->expectException(ReportGettingErrorException::class);
+        $creditRatingNbch->downloadPdfReport(-1, 'test.pdf');
     }
 
     private function preparePerson(): PersonDto
