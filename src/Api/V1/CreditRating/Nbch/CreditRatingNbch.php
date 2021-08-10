@@ -9,14 +9,17 @@ use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
-use Exbico\Underwriting\Exception\ReportNotReadyException;
+use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\RequestPreparationException;
+use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
-use JsonException;
+use InvalidArgumentException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Psr\Http\Client\ClientExceptionInterface;
+use RuntimeException;
 
 class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
 {
@@ -25,15 +28,16 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @param PersonDto $person
      * @param DocumentDto $document
      * @return ReportStatusDto
-     * @throws NotEnoughMoneyException
-     * @throws JsonException
      * @throws BadRequestException
-     * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws TooManyRequestsException
-     * @throws ServerErrorException
      * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
      * @throws ClientExceptionInterface
+     * @throws RuntimeException
      */
     public function requestReport(PersonDto $person, DocumentDto $document): ReportStatusDto
     {
@@ -53,13 +57,15 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
-     * @throws JsonException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws TooManyRequestsException
      * @throws ServerErrorException
      * @throws HttpException
+     * @throws ResponseParsingException
+     * @throws RequestPreparationException
+     * @throws InvalidArgumentException
      */
     public function requestLeadReport(int $leadId, DocumentDto $document): ReportStatusDto
     {
@@ -78,14 +84,15 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @param int $requestId
      * @param string $savePath
      * @throws BadRequestException
-     * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws ReportNotReadyException
-     * @throws TooManyRequestsException
-     * @throws ServerErrorException
      * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
      * @throws ClientExceptionInterface
-     * @throws JsonException
+     * @throws ResponseParsingException
+     * @throws RequestPreparationException
      */
     public function downloadPdfReport(int $requestId, string $savePath): void
     {

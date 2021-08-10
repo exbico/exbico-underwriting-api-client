@@ -67,18 +67,37 @@ $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
 
+### Запрос скоринга по ID лида
+```php
+
+$leadId = 12345; // Exbico Lead Id
+
+$reportStatus = $client->reports()->scoring()->requestLeadReport($leadId);
+$requestId = $reportStatus->getRequestId(); // 21320130
+$statusLabel = $reportStatus->getStatus(); // 'inProgress'
+```
+
 ### Получение статуса подготовки отчета
 ```php
 $requestId = 21320130;
 $reportStatus = $client->reports()->reportStatus()->getReportStatus($requestId);
 $statusLabel = $reportStatus->getStatus(); // 'success'
 ```
+
 ### Получение отчета кредитной истории НБКИ
 ```php
 // ... Check status of report is 'success' 
 $requestId = 21320130;
 $filename = 'report.pdf';
 $client->reports()->creditRatingNbch()->downloadPdfReport($requestId, $filename);
+```
+
+### Получение отчета по продукту "Скоринг"
+```php
+// ... Check status of report is 'success' 
+$requestId = 21320130;
+$filename = 'report.pdf';
+$client->reports()->scoring()->downloadPdfReport($requestId, $filename);
 ```
 
 Примеры использования находятся в папке `examples`.

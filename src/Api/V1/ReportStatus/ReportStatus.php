@@ -8,11 +8,12 @@ use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
 use Exbico\Underwriting\Exception\UnauthorizedException;
-use JsonException;
 use Psr\Http\Client\ClientExceptionInterface;
+use RuntimeException;
 
 class ReportStatus extends Api implements ReportStatusInterface
 {
@@ -20,14 +21,15 @@ class ReportStatus extends Api implements ReportStatusInterface
      * Get report status by requestId
      * @param int $requestId
      * @return ReportStatusDto
-     * @throws JsonException
      * @throws BadRequestException
-     * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws TooManyRequestsException
-     * @throws ServerErrorException
      * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
      * @throws ClientExceptionInterface
+     * @throws RuntimeException
      */
     public function getReportStatus(int $requestId): ReportStatusDto
     {
