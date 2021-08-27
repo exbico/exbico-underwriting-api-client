@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1;
 
+use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
@@ -19,7 +20,7 @@ abstract class ReportApi extends Api
      * @param ResponseInterface $response
      * @throws ReportNotReadyException
      */
-    private function checkForReportNotReady(ResponseInterface $response): void
+    protected function checkForReportNotReady(ResponseInterface $response): void
     {
         if ($response->getStatusCode() === ReportNotReadyException::HTTP_STATUS) {
             throw new ReportNotReadyException('Report not ready yet');
@@ -27,17 +28,13 @@ abstract class ReportApi extends Api
     }
 
     /**
-     * @param ResponseInterface $response
      * @throws NotEnoughMoneyException
-     * @throws ResponseParsingException
      */
-    private function checkNotEnoughMoney(ResponseInterface $response): void
+    protected function checkNotEnoughMoney(HttpException $exception): void
     {
-        if ($response->getStatusCode() === NotEnoughMoneyException::HTTP_STATUS) {
-            $result = $this->parseResponseResult($response);
-            if (isset($result['message']) && $result['message'] === self::MESSAGE_NOT_ENOUGH_MONEY) {
-                throw new NotEnoughMoneyException($result['message']);
-            }
+        if ($exception->getCode() === NotEnoughMoneyException::HTTP_STATUS
+            && $exception->getMessage() === self::MESSAGE_NOT_ENOUGH_MONEY) {
+            throw new NotEnoughMoneyException($exception->getMessage());
         }
     }
 
@@ -46,7 +43,7 @@ abstract class ReportApi extends Api
      * @throws ReportGettingErrorException
      * @throws ResponseParsingException
      */
-    private function checkReportGettingError(ResponseInterface $response): void
+    protected function checkReportGettingError(ResponseInterface $response): void
     {
         if ($response->getStatusCode() === ReportGettingErrorException::HTTP_STATUS) {
             $result = $this->parseResponseResult($response);

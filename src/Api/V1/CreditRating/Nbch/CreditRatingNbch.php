@@ -28,6 +28,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @param PersonDto $person
      * @param DocumentDto $document
      * @return ReportStatusDto
+     * @throws NotEnoughMoneyException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -46,7 +47,12 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
             'document' => $document->toArray(),
         ]);
         $request = $this->makeRequest('POST', 'credit-rating-nbch')->withBody($requestBody);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkNotEnoughMoney($exception);
+            throw $exception;
+        }
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
     }
@@ -74,7 +80,12 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
             'document' => $document->toArray(),
         ]);
         $request = $this->makeRequest('POST', 'lead-credit-rating-nbch')->withBody($requestBody);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkNotEnoughMoney($exception);
+            throw $exception;
+        }
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
     }

@@ -39,7 +39,12 @@ class Scoring extends ReportApi implements ScoringInterface
             'leadId' => $leadId
         ]);
         $request = $this->makeRequest('POST', 'lead-scoring')->withBody($requestBody);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkNotEnoughMoney($exception);
+            throw $exception;
+        }
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
     }

@@ -26,6 +26,7 @@ interface CreditRatingNbchInterface
      * Ordering credit rating NBCH product
      * @param PersonDto $person
      * @param DocumentDto $document
+     * @throws NotEnoughMoneyException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
