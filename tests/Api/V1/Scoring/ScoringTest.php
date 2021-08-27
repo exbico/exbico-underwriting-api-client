@@ -10,6 +10,7 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -109,6 +110,31 @@ class ScoringTest extends TestCase
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
         $scoring->requestLeadReport($leadId);
     }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws Exception
+     */
+    public function testRequestLeadReportWhenProductNotAvailable(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
+        $scoring->requestLeadReport($leadId);
+    }
+
 
     /**
      * @throws BadRequestException

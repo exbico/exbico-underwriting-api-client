@@ -6,7 +6,9 @@ use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
@@ -20,6 +22,8 @@ interface ScoringInterface
     /**
      * @param int $leadId
      * @return ReportStatusDto
+     * @throws NotEnoughMoneyException
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
