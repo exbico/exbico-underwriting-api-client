@@ -12,6 +12,8 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
+use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -98,6 +100,8 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * Download and save NBCH PDF credit rating report
      * @param int $requestId
      * @param string $savePath
+     * @throws ReportGettingErrorException
+     * @throws ReportNotReadyException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -113,7 +117,13 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
     {
         $path = sprintf('credit-rating-nbch/%d/pdf', $requestId);
         $request = $this->makeRequest('GET', $path);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkForReportNotReady($exception);
+            $this->checkReportGettingError($exception);
+            throw $exception;
+        }
         $this->download($response, $savePath);
     }
 }
