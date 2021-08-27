@@ -11,6 +11,7 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
@@ -58,10 +59,11 @@ class Scoring extends ReportApi implements ScoringInterface
      * Download and save scoring report
      * @param int $requestId
      * @param string $savePath
+     * @throws ReportNotReadyException
+     * @throws ReportGettingErrorException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws ReportNotReadyException
      * @throws TooManyRequestsException
      * @throws ServerErrorException
      * @throws HttpException
@@ -72,7 +74,13 @@ class Scoring extends ReportApi implements ScoringInterface
     {
         $path = sprintf('scoring/%d/pdf', $requestId);
         $request = $this->makeRequest('GET', $path);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkForReportNotReady($exception);
+            $this->checkReportGettingError($exception);
+            throw $exception;
+        }
         $this->download($response, $savePath);
     }
 }
