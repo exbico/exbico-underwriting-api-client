@@ -261,6 +261,56 @@ class ScoringTest extends TestCase
         self::assertEquals('inProgress', $reportStatus->getStatus());
     }
 
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenProductNotAvailable(): void
+    {
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
+        $scoring->requestReport(
+            $this->preparePersonWithBirthDateDto(),
+            $this->prepareDocumentWithIssueDateDto()
+        );
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenNotEnoughMoney(): void
+    {
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getNotEnoughMoneyResponse(),
+        ]));
+        $this->expectException(NotEnoughMoneyException::class);
+        $scoring->requestReport(
+            $this->preparePersonWithBirthDateDto(),
+            $this->prepareDocumentWithIssueDateDto()
+        );
+    }
+
     private function preparePersonWithBirthDateDto(): PersonWithBirthDateDto
     {
         $person = new PersonWithBirthDateDto();

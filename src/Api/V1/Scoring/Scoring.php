@@ -29,6 +29,8 @@ class Scoring extends ReportApi implements ScoringInterface
      * @param PersonWithBirthDateDto $person
      * @param DocumentWithIssueDateDto $document
      * @return ReportStatusDto
+     * @throws NotEnoughMoneyException
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -49,7 +51,13 @@ class Scoring extends ReportApi implements ScoringInterface
             ]
         );
         $request = $this->makeRequest('POST', 'scoring')->withBody($requestBody);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkNotEnoughMoney($exception);
+            $this->checkProductIsAvailable($exception);
+            throw $exception;
+        }
         $responseResult = $this->parseResponseResult($response);
         return new ReportStatusDto($responseResult);
     }
