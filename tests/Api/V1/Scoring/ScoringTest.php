@@ -34,9 +34,6 @@ class ScoringTest extends TestCase
     use WithClient;
     use WithResponses;
 
-    private const MESSAGE_SCORING_FOR_LEAD_ALREADY_RECEIVED
-        = 'Free scoring for the lead %d has already been received.';
-
     /**
      * @throws BadRequestException
      * @throws RuntimeException
@@ -150,36 +147,6 @@ class ScoringTest extends TestCase
         $scoring->requestLeadReport($leadId);
     }
 
-
-    /**
-     * @throws BadRequestException
-     * @throws ForbiddenException
-     * @throws HttpException
-     * @throws NotFoundException
-     * @throws ServerErrorException
-     * @throws TooManyRequestsException
-     * @throws UnauthorizedException
-     * @throws InvalidArgumentException
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @throws RuntimeException
-     * @throws Exception
-     */
-    public function testRequestLeadReportWhenFreeScoringHasBeenAlreadyReceived(): void
-    {
-        $leadId = random_int(1, 9999999);
-        $expectedMessage = sprintf(self::MESSAGE_SCORING_FOR_LEAD_ALREADY_RECEIVED, $leadId);
-        $scoring = new Scoring(
-            $this->getClientWithMockHandler(
-                [
-                    $this->getForbiddenResponse($expectedMessage),
-                ]
-            )
-        );
-        $this->expectException(ForbiddenException::class);
-        $this->expectExceptionMessage($expectedMessage);
-        $scoring->requestLeadReport($leadId);
-    }
 
     /**
      * @throws BadRequestException
