@@ -52,6 +52,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
             $response = $this->sendRequest($request);
         } catch (HttpException $exception) {
             $this->checkNotEnoughMoney($exception);
+            $this->checkProductIsAvailable($exception);
             throw $exception;
         }
         $responseResult = $this->parseResponseResult($response);

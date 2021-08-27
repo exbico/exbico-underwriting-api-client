@@ -87,6 +87,29 @@ class CreditRatingNbchTest extends TestCase
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenProductNotAvailable(): void
+    {
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+    }
+
     /**
      * @throws BadRequestException
      * @throws ForbiddenException
@@ -269,7 +292,7 @@ class CreditRatingNbchTest extends TestCase
      * @throws ServerErrorException
      * @throws Exception
      */
-    public function testRequestLeadReportWhenProductIsNotAvailable(): void
+    public function testRequestLeadReportWhenProductNotAvailable(): void
     {
         $leadId = random_int(1, 9999999);
         $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
