@@ -67,9 +67,11 @@ class Scoring extends ReportApi implements ScoringInterface
      */
     public function requestLeadReport(int $leadId): ReportStatusDto
     {
-        $requestBody = $this->prepareRequestBody([
-                                                     'leadId' => $leadId
-                                                 ]);
+        $requestBody = $this->prepareRequestBody(
+            [
+                'leadId' => $leadId,
+            ]
+        );
         $request = $this->makeRequest('POST', 'lead-scoring')->withBody($requestBody);
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
