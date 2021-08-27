@@ -9,6 +9,7 @@ use Exbico\Underwriting\Dto\V1\Request\PersonDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
@@ -67,6 +68,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
+     * @throws LeadNotDistributedToContractException
      * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -88,6 +90,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
         try {
             $response = $this->sendRequest($request);
         } catch (HttpException $exception) {
+            $this->checkForLeadNotDistributedToContract($exception);
             $this->checkNotEnoughMoney($exception);
             $this->checkProductIsAvailable($exception);
             throw $exception;

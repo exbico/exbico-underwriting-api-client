@@ -9,6 +9,7 @@ use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
@@ -50,6 +51,7 @@ interface CreditRatingNbchInterface
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
+     * @throws LeadNotDistributedToContractException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException

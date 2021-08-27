@@ -7,6 +7,7 @@ use Exbico\Underwriting\Dto\V1\Response\ReportPriceResponseDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
@@ -23,6 +24,7 @@ interface ReportPriceInterface
      * @param ReportPriceRequestDto $reportPriceDto
      * @return ReportPriceResponseDto
      * @throws ProductNotAvailableException
+     * @throws LeadNotDistributedToContractException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
