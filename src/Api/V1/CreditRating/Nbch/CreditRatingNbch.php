@@ -11,6 +11,7 @@ use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -63,6 +64,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
@@ -84,6 +86,7 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
             $response = $this->sendRequest($request);
         } catch (HttpException $exception) {
             $this->checkNotEnoughMoney($exception);
+            $this->checkProductIsAvailable($exception);
             throw $exception;
         }
         $responseResult = $this->parseResponseResult($response);
