@@ -8,8 +8,6 @@ use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
-use Exbico\Underwriting\Exception\ResponseParsingException;
-use Psr\Http\Message\ResponseInterface;
 
 abstract class ReportApi extends Api
 {
@@ -17,17 +15,6 @@ abstract class ReportApi extends Api
         'An error has occurred. Please check you have enough money to get this report.';
     private const MESSAGE_REPORT_GETTING_ERROR  = 'Report getting error';
     private const MESSAGE_PRODUCT_NOT_AVAILABLE = 'Requested product is not available for your account';
-
-    /**
-     * @param ResponseInterface $response
-     * @throws ReportNotReadyException
-     */
-    protected function checkForReportNotReady(ResponseInterface $response): void
-    {
-        if ($response->getStatusCode() === ReportNotReadyException::HTTP_STATUS) {
-            throw new ReportNotReadyException('Report not ready yet');
-        }
-    }
 
     /**
      * @throws NotEnoughMoneyException
@@ -52,17 +39,25 @@ abstract class ReportApi extends Api
     }
 
     /**
-     * @param ResponseInterface $response
+     * @param HttpException $exception
      * @throws ReportGettingErrorException
-     * @throws ResponseParsingException
      */
-    protected function checkReportGettingError(ResponseInterface $response): void
+    protected function checkReportGettingError(HttpException $exception): void
     {
-        if ($response->getStatusCode() === ReportGettingErrorException::HTTP_STATUS) {
-            $result = $this->parseResponseResult($response);
-            if (isset($result['message']) && $result['message'] === self::MESSAGE_REPORT_GETTING_ERROR) {
-                throw new ReportGettingErrorException($result['message']);
-            }
+        if ($exception->getCode() === ReportGettingErrorException::HTTP_STATUS
+            && $exception->getMessage() === self::MESSAGE_REPORT_GETTING_ERROR) {
+            throw new ReportGettingErrorException($exception->getMessage(), $exception->getCode(), $exception);
+        }
+    }
+
+    /**
+     * @param HttpException $exception
+     * @throws ReportNotReadyException
+     */
+    protected function checkForReportNotReady(HttpException $exception): void
+    {
+        if ($exception->getCode() === ReportNotReadyException::HTTP_STATUS) {
+            throw new ReportNotReadyException('Report not ready yet');
         }
     }
 }
