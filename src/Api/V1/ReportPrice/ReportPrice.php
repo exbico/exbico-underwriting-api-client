@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1\ReportPrice;
 
-use Exbico\Underwriting\Api\V1\Api;
+use Exbico\Underwriting\Api\V1\ReportApi;
 use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportPriceResponseDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -20,11 +21,12 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\StreamInterface;
 use function array_key_exists;
 
-class ReportPrice extends Api implements ReportPriceInterface
+class ReportPrice extends ReportApi implements ReportPriceInterface
 {
     /**
      * @param ReportPriceRequestDto $reportPriceDto
      * @return ReportPriceResponseDto
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -42,7 +44,12 @@ class ReportPrice extends Api implements ReportPriceInterface
         $requestBody = $this->prepareRequestBody($reportPriceDto->toArray());
         $request = $this->makeRequest('POST', 'report-price')
             ->withBody($requestBody);
-        $response = $this->sendRequest($request);
+        try {
+            $response = $this->sendRequest($request);
+        } catch (HttpException $exception) {
+            $this->checkProductIsAvailable($exception);
+            throw $exception;
+        }
         $responseResult = $this->parseResponseResult($response);
         return new ReportPriceResponseDto($responseResult);
     }
