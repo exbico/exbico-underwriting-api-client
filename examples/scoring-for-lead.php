@@ -2,15 +2,17 @@
 require_once __DIR__ . '/bootstrap/bootstrap.php';
 
 /******************************/
-/**** FULL SCORING PROCESS ****/
+/**** FULL SCORING PROCESS FOR LEAD ****/
 /******************************/
 
 $client = getTestClient();
-$person = getTestPersonWithBirthDate();
-$document = getTestDocumentWithIssueDate();
+$leadId = isset($argv[1]) ? (int)$argv[1] : null;
+if ($leadId === null) {
+    throw new InvalidArgumentException('Lead ID not provided');
+}
 $reportSavePath = __DIR__ . DIRECTORY_SEPARATOR . 'report_' .  date('YmdHis') . '.pdf';
 
-$reportStatus = $client->reports()->scoring()->requestReport($person, $document);
+$reportStatus = $client->reports()->scoring()->requestLeadReport($leadId);
 printf('Scoring requested with ID: %d' . PHP_EOL, $reportStatus->getRequestId());
 printf('Waiting for status change' . PHP_EOL);
 while ($reportStatus->getStatus() === 'inProgress') {
