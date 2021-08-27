@@ -6,25 +6,14 @@ namespace Exbico\Underwriting\Api\V1;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
-use JsonException;
+use Exbico\Underwriting\Exception\ResponseParsingException;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class ReportApi extends Api
 {
-    private const MESSAGE_NOT_ENOUGH_MONEY = 'An error has occurred. Please check you have enough money to get this report.';
+    private const MESSAGE_NOT_ENOUGH_MONEY =
+        'An error has occurred. Please check you have enough money to get this report.';
     private const MESSAGE_REPORT_GETTING_ERROR = 'Report getting error';
-
-    /**
-     * @param ResponseInterface $response
-     * @throws JsonException
-     */
-    protected function checkForErrors(ResponseInterface $response): void
-    {
-        $this->checkForReportNotReady($response);
-        $this->checkNotEnoughMoney($response);
-        $this->checkReportGettingError($response);
-        parent::checkForErrors($response);
-    }
 
     /**
      * @param ResponseInterface $response
@@ -39,8 +28,8 @@ abstract class ReportApi extends Api
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
      * @throws NotEnoughMoneyException
+     * @throws ResponseParsingException
      */
     private function checkNotEnoughMoney(ResponseInterface $response): void
     {
@@ -54,7 +43,8 @@ abstract class ReportApi extends Api
 
     /**
      * @param ResponseInterface $response
-     * @throws JsonException
+     * @throws ReportGettingErrorException
+     * @throws ResponseParsingException
      */
     private function checkReportGettingError(ResponseInterface $response): void
     {
