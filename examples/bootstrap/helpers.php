@@ -4,7 +4,9 @@ declare(strict_types=1);
 use Exbico\Underwriting\ApiSettings;
 use Exbico\Underwriting\Client;
 use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
 use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -33,6 +35,25 @@ function getTestPerson(): PersonDto
     $person->setFirstname('Иван');
     $person->setLastname('Иванов');
     $person->setMiddlename('Иванович');
+    return $person;
+}
+
+function getTestDocumentWithIssueDate(): DocumentWithIssueDateDto
+{
+    $document = new DocumentWithIssueDateDto();
+    $document->setNumber('333333');
+    $document->setSeries('5555');
+    $document->setIssueDate('2020-10-20');
+    return $document;
+}
+
+function getTestPersonWithBirthDate(): PersonWithBirthDateDto
+{
+    $person = new PersonWithBirthDateDto();
+    $person->setFirstname('Иван');
+    $person->setLastname('Иванов');
+    $person->setPatronymic('Иванович');
+    $person->setBirthDate('2000-12-12');
     return $person;
 }
 
