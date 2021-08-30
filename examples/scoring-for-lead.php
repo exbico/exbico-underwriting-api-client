@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/bootstrap/bootstrap.php';
 
-/******************************/
+/***************************************/
 /**** FULL SCORING PROCESS FOR LEAD ****/
-/******************************/
+/***************************************/
 
 $client = getTestClient();
 $leadId = isset($argv[1]) ? (int)$argv[1] : null;
