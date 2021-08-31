@@ -149,7 +149,7 @@ abstract class AbstractApi
     private function getBaseUri(): Uri
     {
         return (new Uri($this->getClient()->getApiSettings()->getBaseUrl()))
-            ->withPath(implode('/', [
+            ->withPath('/' . implode('/', [
                     $this->getClient()->getApiSettings()->getApiBasePath(),
                     $this->getApiVersion(),
                 ]) . '/');
