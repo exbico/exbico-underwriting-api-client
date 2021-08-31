@@ -4,9 +4,9 @@ use Exbico\Underwriting\Dto\V1\Request\ReportPriceRequestDto;
 
 require_once __DIR__ . '/bootstrap/bootstrap.php';
 
-/**********************************/
+/*******************************************/
 /**** GET REPORT PRICE SCORING FOR LEAD ****/
-/**********************************/
+/*******************************************/
 
 $client = getTestClient();
 $leadId = isset($argv[1]) ? (int)$argv[1] : null;

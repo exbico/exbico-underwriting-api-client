@@ -85,7 +85,7 @@ $person->setLastName('Иванов');
 $person->setPatronymic('Иванович');
 $person->setBirthDate('2000-12-12');
 
-$reportStatus = $client->reports()->scoring()->requesReport($person, $document);
+$reportStatus = $client->reports()->scoring()->requestReport($person, $document);
 $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
