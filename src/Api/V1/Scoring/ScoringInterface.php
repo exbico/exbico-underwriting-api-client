@@ -21,7 +21,7 @@ interface ScoringInterface
 {
     /**
      * @param PersonWithBirthDateDto $person
-     * @param DocumentWithIssueDateDto $document
+     * @param ?DocumentWithIssueDateDto $document
      * @return ReportStatusDto
      * @throws BadRequestException
      * @throws ForbiddenException
@@ -34,7 +34,7 @@ interface ScoringInterface
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
-    public function requestReport(PersonWithBirthDateDto $person, DocumentWithIssueDateDto $document): ReportStatusDto;
+    public function requestReport(PersonWithBirthDateDto $person, ?DocumentWithIssueDateDto $document): ReportStatusDto;
 
     /**
      * @param int $leadId

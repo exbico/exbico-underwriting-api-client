@@ -24,7 +24,7 @@ class Scoring extends ReportApi implements ScoringInterface
 {
     /**
      * @param PersonWithBirthDateDto $person
-     * @param DocumentWithIssueDateDto $document
+     * @param ?DocumentWithIssueDateDto $document
      * @return ReportStatusDto
      * @throws BadRequestException
      * @throws ForbiddenException
@@ -37,14 +37,16 @@ class Scoring extends ReportApi implements ScoringInterface
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
-    public function requestReport(PersonWithBirthDateDto $person, DocumentWithIssueDateDto $document): ReportStatusDto
+    public function requestReport(PersonWithBirthDateDto $person, ?DocumentWithIssueDateDto $document): ReportStatusDto
     {
-        $requestBody = $this->prepareRequestBody(
-            [
-                'person' => $person->toArray(),
-                'document' => $document->toArray(),
-            ]
-        );
+        $body = [
+            'person' => $person->toArray(),
+        ];
+        if ($document !== null) {
+            $body['document'] = $document->toArray();
+        }
+
+        $requestBody = $this->prepareRequestBody($body);
         $request = $this->makeRequest('POST', 'scoring')->withBody($requestBody);
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
