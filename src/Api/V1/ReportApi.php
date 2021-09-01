@@ -28,7 +28,7 @@ abstract class ReportApi extends Api
     {
         if ($exception->getCode() === BadRequestException::HTTP_STATUS
             && $exception->getMessage() === self::MESSAGE_NOT_ENOUGH_MONEY) {
-            throw new NotEnoughMoneyException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new NotEnoughMoneyException($exception->getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ abstract class ReportApi extends Api
     {
         if ($exception->getCode() === ForbiddenException::HTTP_STATUS
             && $exception->getMessage() === self::MESSAGE_PRODUCT_NOT_AVAILABLE) {
-            throw new ProductNotAvailableException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new ProductNotAvailableException($exception->getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ abstract class ReportApi extends Api
     {
         if ($exception->getCode() === ServerErrorException::HTTP_STATUS
             && $exception->getMessage() === self::MESSAGE_REPORT_GETTING_ERROR) {
-            throw new ReportGettingErrorException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new ReportGettingErrorException($exception->getMessage());
         }
     }
 
