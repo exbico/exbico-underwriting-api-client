@@ -50,6 +50,18 @@ trait WithResponses
     }
 
     /**
+     * @return ResponseInterface
+     * @throws JsonException
+     */
+    private function getProductNotAvailableResponse(): ResponseInterface
+    {
+        return new Response(403, [], json_encode([
+            'status' => 'failed',
+            'message' => 'Requested product is not available for your account',
+        ], JSON_THROW_ON_ERROR));
+    }
+
+    /**
      * @throws JsonException
      */
     private function getReportGettingErrorResponse(): ResponseInterface

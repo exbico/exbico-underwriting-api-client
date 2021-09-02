@@ -5,7 +5,7 @@ namespace Exbico\Underwriting\Dto\V1\Request;
 
 use Exbico\Underwriting\Dto\AbstractDto;
 
-final class DocumentDto extends AbstractDto
+class DocumentDto extends AbstractDto
 {
     protected $series;
     protected $number;

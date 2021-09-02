@@ -67,6 +67,29 @@ $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
 
+### Запрос скоринга по ФИО, дате рождения и паспортным данным
+```php
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
+
+// Document data
+$document = new DocumentWithIssueDateDto();
+$document->setNumber('333333');
+$document->setSeries('5555');
+$document->setIssueDate('2020-10-20');
+
+// Person data
+$person = new PersonWithBirthDateDto();
+$person->setFirstName('Иван');
+$person->setLastName('Иванов');
+$person->setPatronymic('Иванович');
+$person->setBirthDate('2000-12-12');
+
+$reportStatus = $client->reports()->scoring()->requestReport($person, $document);
+$requestId = $reportStatus->getRequestId(); // 21320130
+$statusLabel = $reportStatus->getStatus(); // 'inProgress'
+```
+
 ### Запрос скоринга по ID лида
 ```php
 

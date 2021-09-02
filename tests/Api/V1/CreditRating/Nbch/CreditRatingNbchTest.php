@@ -10,6 +10,7 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\BadRequestException;
@@ -83,6 +84,29 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+    }
+
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenProductNotAvailable(): void
+    {
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
         $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
     }
 
@@ -250,6 +274,31 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
+        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws RequestPreparationException
+     * @throws ResponseParsingException
+     * @throws TooManyRequestsException
+     * @throws JsonException
+     * @throws ForbiddenException
+     * @throws ClientExceptionInterface
+     * @throws NotEnoughMoneyException
+     * @throws InvalidArgumentException
+     * @throws HttpException
+     * @throws ServerErrorException
+     * @throws Exception
+     */
+    public function testRequestLeadReportWhenProductNotAvailable(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
         $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
     }
 
