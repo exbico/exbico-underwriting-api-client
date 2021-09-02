@@ -9,8 +9,12 @@ use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
+use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -26,6 +30,8 @@ interface CreditRatingNbchInterface
      * Ordering credit rating NBCH product
      * @param PersonDto $person
      * @param DocumentDto $document
+     * @throws NotEnoughMoneyException
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -45,6 +51,7 @@ interface CreditRatingNbchInterface
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
+     * @throws LeadNotDistributedToContractException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
@@ -61,6 +68,8 @@ interface CreditRatingNbchInterface
      * Getting pdf report of credit rating NBCH product
      * @param int $requestId
      * @param string $savePath
+     * @throws ReportGettingErrorException
+     * @throws ReportNotReadyException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException

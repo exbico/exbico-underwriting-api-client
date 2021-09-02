@@ -13,6 +13,7 @@ use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -32,9 +33,6 @@ class ScoringTest extends TestCase
 {
     use WithClient;
     use WithResponses;
-
-    private const MESSAGE_SCORING_FOR_LEAD_ALREADY_RECEIVED
-        = 'Free scoring for the lead %d has already been received.';
 
     /**
      * @throws BadRequestException
@@ -139,21 +137,16 @@ class ScoringTest extends TestCase
      * @throws RuntimeException
      * @throws Exception
      */
-    public function testRequestLeadReportWhenFreeScoringHasBeenAlreadyReceived(): void
+    public function testRequestLeadReportWhenProductNotAvailable(): void
     {
         $leadId = random_int(1, 9999999);
-        $expectedMessage = sprintf(self::MESSAGE_SCORING_FOR_LEAD_ALREADY_RECEIVED, $leadId);
-        $scoring = new Scoring(
-            $this->getClientWithMockHandler(
-                [
-                    $this->getForbiddenResponse($expectedMessage),
-                ]
-            )
-        );
-        $this->expectException(ForbiddenException::class);
-        $this->expectExceptionMessage($expectedMessage);
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
         $scoring->requestLeadReport($leadId);
     }
+
 
     /**
      * @throws BadRequestException
@@ -266,6 +259,56 @@ class ScoringTest extends TestCase
         );
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenProductNotAvailable(): void
+    {
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse(),
+        ]));
+        $this->expectException(ProductNotAvailableException::class);
+        $scoring->requestReport(
+            $this->preparePersonWithBirthDateDto(),
+            $this->prepareDocumentWithIssueDateDto()
+        );
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function testRequestReportWhenNotEnoughMoney(): void
+    {
+        $scoring = new Scoring($this->getClientWithMockHandler([
+            $this->getNotEnoughMoneyResponse(),
+        ]));
+        $this->expectException(NotEnoughMoneyException::class);
+        $scoring->requestReport(
+            $this->preparePersonWithBirthDateDto(),
+            $this->prepareDocumentWithIssueDateDto()
+        );
     }
 
     private function preparePersonWithBirthDateDto(): PersonWithBirthDateDto

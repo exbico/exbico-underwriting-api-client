@@ -1,6 +1,5 @@
 phpunit.xml
 .phpunit.*
 phpcs.xml
-composer.lock
 vendor
 .idea

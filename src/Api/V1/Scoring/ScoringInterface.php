@@ -8,7 +8,11 @@ use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
+use Exbico\Underwriting\Exception\NotEnoughMoneyException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
+use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
 use Exbico\Underwriting\Exception\ServerErrorException;
 use Exbico\Underwriting\Exception\TooManyRequestsException;
@@ -39,6 +43,9 @@ interface ScoringInterface
     /**
      * @param int $leadId
      * @return ReportStatusDto
+     * @throws NotEnoughMoneyException
+     * @throws ProductNotAvailableException
+     * @throws LeadNotDistributedToContractException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -56,10 +63,11 @@ interface ScoringInterface
      * Download and save scoring report
      * @param int $requestId
      * @param string $savePath
+     * @throws ReportNotReadyException
+     * @throws ReportGettingErrorException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
-     * @throws ReportNotReadyException
      * @throws TooManyRequestsException
      * @throws ServerErrorException
      * @throws HttpException

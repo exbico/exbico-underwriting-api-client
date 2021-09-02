@@ -10,6 +10,7 @@ use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotFoundException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -122,6 +123,22 @@ class ReportPriceTest extends TestCase
         $reportPriceRequestDto->setReportType('credit-rating-nbch');
         $reportPriceRequestDto->setLeadId(random_int(1, 100000));
         $this->expectException(LeadNotDistributedToContractException::class);
+        $reportPriceApi->getReportPrice($reportPriceRequestDto);
+    }
+
+    /**
+     * @throws Exception
+     * @throws ClientExceptionInterface
+     */
+    public function testGetReportPriceWhenProductNotAvailable(): void
+    {
+        $reportPriceApi = new ReportPrice($this->getClientWithMockHandler([
+            $this->getProductNotAvailableResponse()
+        ]));
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('credit-rating-nbch');
+        $reportPriceRequestDto->setLeadId(random_int(1, 100000));
+        $this->expectException(ProductNotAvailableException::class);
         $reportPriceApi->getReportPrice($reportPriceRequestDto);
     }
 

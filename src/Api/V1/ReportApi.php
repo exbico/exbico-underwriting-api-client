@@ -3,66 +3,77 @@ declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1;
 
+use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\ForbiddenException;
+use Exbico\Underwriting\Exception\HttpException;
+use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
+use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
-use JsonException;
-use Psr\Http\Message\ResponseInterface;
+use Exbico\Underwriting\Exception\ServerErrorException;
 
 abstract class ReportApi extends Api
 {
-    private const MESSAGE_NOT_ENOUGH_MONEY = 'An error has occurred. Please check you have enough money to get this report.';
-    private const MESSAGE_REPORT_GETTING_ERROR = 'Report getting error';
+    private const MESSAGE_NOT_ENOUGH_MONEY                 =
+        'An error has occurred. Please check you have enough money to get this report.';
+    private const MESSAGE_REPORT_GETTING_ERROR             = 'Report getting error';
+    private const MESSAGE_PRODUCT_NOT_AVAILABLE            = 'Requested product is not available for your account';
+    private const PATTERN_LEAD_NOT_DISTRIBUTED_TO_CONTRACT = '/Lead with id \d+ was not distributed to your contract/';
 
     /**
-     * @param ResponseInterface $response
-     * @throws JsonException
+     * @throws NotEnoughMoneyException
      */
-    protected function checkForErrors(ResponseInterface $response): void
+    protected function checkNotEnoughMoney(HttpException $exception): void
     {
-        $this->checkForReportNotReady($response);
-        $this->checkNotEnoughMoney($response);
-        $this->checkReportGettingError($response);
-        parent::checkForErrors($response);
+        if ($exception->getCode() === BadRequestException::HTTP_STATUS
+            && $exception->getMessage() === self::MESSAGE_NOT_ENOUGH_MONEY) {
+            throw new NotEnoughMoneyException($exception->getMessage());
+        }
     }
 
     /**
-     * @param ResponseInterface $response
+     * @throws ProductNotAvailableException
+     */
+    protected function checkProductIsAvailable(HttpException $exception): void
+    {
+        if ($exception->getCode() === ForbiddenException::HTTP_STATUS
+            && $exception->getMessage() === self::MESSAGE_PRODUCT_NOT_AVAILABLE) {
+            throw new ProductNotAvailableException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param HttpException $exception
+     * @throws ReportGettingErrorException
+     */
+    protected function checkReportGettingError(HttpException $exception): void
+    {
+        if ($exception->getCode() === ServerErrorException::HTTP_STATUS
+            && $exception->getMessage() === self::MESSAGE_REPORT_GETTING_ERROR) {
+            throw new ReportGettingErrorException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param HttpException $exception
      * @throws ReportNotReadyException
      */
-    private function checkForReportNotReady(ResponseInterface $response): void
+    protected function checkForReportNotReady(HttpException $exception): void
     {
-        if ($response->getStatusCode() === ReportNotReadyException::HTTP_STATUS) {
+        if ($exception->getCode() === ReportNotReadyException::HTTP_STATUS) {
             throw new ReportNotReadyException('Report not ready yet');
         }
     }
 
     /**
-     * @param ResponseInterface $response
-     * @throws JsonException
-     * @throws NotEnoughMoneyException
+     * @throws LeadNotDistributedToContractException
      */
-    private function checkNotEnoughMoney(ResponseInterface $response): void
+    protected function checkForLeadNotDistributedToContract(HttpException $exception): void
     {
-        if ($response->getStatusCode() === NotEnoughMoneyException::HTTP_STATUS) {
-            $result = $this->parseResponseResult($response);
-            if (isset($result['message']) && $result['message'] === self::MESSAGE_NOT_ENOUGH_MONEY) {
-                throw new NotEnoughMoneyException($result['message']);
-            }
-        }
-    }
-
-    /**
-     * @param ResponseInterface $response
-     * @throws JsonException
-     */
-    private function checkReportGettingError(ResponseInterface $response): void
-    {
-        if ($response->getStatusCode() === ReportGettingErrorException::HTTP_STATUS) {
-            $result = $this->parseResponseResult($response);
-            if (isset($result['message']) && $result['message'] === self::MESSAGE_REPORT_GETTING_ERROR) {
-                throw new ReportGettingErrorException($result['message']);
-            }
+        if ($exception->getCode() === ForbiddenException::HTTP_STATUS
+            && preg_match(self::PATTERN_LEAD_NOT_DISTRIBUTED_TO_CONTRACT, $exception->getMessage())) {
+            throw new LeadNotDistributedToContractException($exception->getMessage());
         }
     }
 }
