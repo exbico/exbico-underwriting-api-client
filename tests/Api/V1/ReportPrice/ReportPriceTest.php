@@ -34,6 +34,7 @@ class ReportPriceTest extends TestCase
     private const PRICE_NBCH_REPORT = 100;
     private const PRICE_NBCH_FOR_LEAD = 0;
     private const PRICE_SCORING_FOR_LEAD = 0;
+    private const PRICE_SCORING = 25;
     private const MESSAGE_NON_EXISTENT_REPORT = 'Enum failed, enum: ["credit-rating-nbch","scoring"]';
 
     /**
@@ -62,6 +63,7 @@ class ReportPriceTest extends TestCase
         $client = $this->getClientWithMockHandler([
             $this->getReportPriceSuccessfulResponse(self::PRICE_NBCH_REPORT),
             $this->getReportPriceSuccessfulResponse(self::PRICE_NBCH_FOR_LEAD),
+            $this->getReportPriceSuccessfulResponse(self::PRICE_SCORING),
             $this->getReportPriceSuccessfulResponse(self::PRICE_SCORING_FOR_LEAD),
             $this->getBadRequestResponse(self::MESSAGE_NON_EXISTENT_REPORT),
         ]);
@@ -77,6 +79,11 @@ class ReportPriceTest extends TestCase
         $reportPriceRequestDto->setLeadId(random_int(1, 100000));
         $reportPriceResponseDto = $reportPriceApi->getReportPrice($reportPriceRequestDto);
         self::assertEquals(self::PRICE_NBCH_FOR_LEAD, $reportPriceResponseDto->getPrice());
+        // Scoring successful
+        $reportPriceRequestDto = new ReportPriceRequestDto();
+        $reportPriceRequestDto->setReportType('scoring');
+        $reportPriceResponseDto = $reportPriceApi->getReportPrice($reportPriceRequestDto);
+        self::assertEquals(self::PRICE_SCORING, $reportPriceResponseDto->getPrice());
         // Scoring for lead successful
         $reportPriceRequestDto = new ReportPriceRequestDto();
         $reportPriceRequestDto->setReportType('scoring');

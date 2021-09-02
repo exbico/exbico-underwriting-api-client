@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1\Scoring;
 
 use Exbico\Underwriting\Api\V1\ReportApi;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ForbiddenException;
@@ -20,6 +23,37 @@ use RuntimeException;
 class Scoring extends ReportApi implements ScoringInterface
 {
     /**
+     * @param PersonWithBirthDateDto $person
+     * @param ?DocumentWithIssueDateDto $document
+     * @return ReportStatusDto
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function requestReport(PersonWithBirthDateDto $person, ?DocumentWithIssueDateDto $document): ReportStatusDto
+    {
+        $body = [
+            'person' => $person->toArray(),
+        ];
+        if ($document !== null) {
+            $body['document'] = $document->toArray();
+        }
+
+        $requestBody = $this->prepareRequestBody($body);
+        $request = $this->makeRequest('POST', 'scoring')->withBody($requestBody);
+        $response = $this->sendRequest($request);
+        $responseResult = $this->parseResponseResult($response);
+        return new ReportStatusDto($responseResult);
+    }
+
+    /**
      * @param int $leadId
      * @return ReportStatusDto
      * @throws BadRequestException
@@ -35,9 +69,11 @@ class Scoring extends ReportApi implements ScoringInterface
      */
     public function requestLeadReport(int $leadId): ReportStatusDto
     {
-        $requestBody = $this->prepareRequestBody([
-            'leadId' => $leadId
-        ]);
+        $requestBody = $this->prepareRequestBody(
+            [
+                'leadId' => $leadId,
+            ]
+        );
         $request = $this->makeRequest('POST', 'lead-scoring')->withBody($requestBody);
         $response = $this->sendRequest($request);
         $responseResult = $this->parseResponseResult($response);
@@ -46,6 +82,7 @@ class Scoring extends ReportApi implements ScoringInterface
 
     /**
      * Download and save scoring report
+     *
      * @param int $requestId
      * @param string $savePath
      * @throws BadRequestException

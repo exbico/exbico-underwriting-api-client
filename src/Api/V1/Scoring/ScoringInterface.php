@@ -2,6 +2,8 @@
 
 namespace Exbico\Underwriting\Api\V1\Scoring;
 
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
 use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ForbiddenException;
@@ -17,6 +19,23 @@ use RuntimeException;
 
 interface ScoringInterface
 {
+    /**
+     * @param PersonWithBirthDateDto $person
+     * @param ?DocumentWithIssueDateDto $document
+     * @return ReportStatusDto
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws NotFoundException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     */
+    public function requestReport(PersonWithBirthDateDto $person, ?DocumentWithIssueDateDto $document): ReportStatusDto;
+
     /**
      * @param int $leadId
      * @return ReportStatusDto
