@@ -45,8 +45,12 @@ class Scoring extends ReportApi implements ScoringInterface
      */
     public function requestReport(PersonWithBirthDateDto $person, ?DocumentWithIssueDateDto $document): ReportStatusDto
     {
+        $personBody = $person->toArray();
+        if (empty($personBody['patronymic'])) {
+            unset($personBody['patronymic']);
+        }
         $body = [
-            'person' => $person->toArray(),
+            'person' => $personBody,
         ];
         if ($document !== null) {
             $body['document'] = $document->toArray();
