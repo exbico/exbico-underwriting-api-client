@@ -42,6 +42,7 @@ interface ScoringInterface
 
     /**
      * @param int $leadId
+     * @param ?DocumentWithIssueDateDto $document
      * @return ReportStatusDto
      * @throws NotEnoughMoneyException
      * @throws ProductNotAvailableException
@@ -57,7 +58,7 @@ interface ScoringInterface
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
-    public function requestLeadReport(int $leadId): ReportStatusDto;
+    public function requestLeadReport(int $leadId, ?DocumentWithIssueDateDto $document = null): ReportStatusDto;
 
     /**
      * Download and save scoring report
