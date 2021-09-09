@@ -122,11 +122,47 @@ Report downloaded: /.../exbico-underwriting-api-client/examples/report_202103091
 #### Получение скоринга &dash; полный цикл (*scoring.php*)
 Mac \ Linux:
 ```
-API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php scoring.php {LEAD_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php scoring.php
 ```
 Windows:
 ```
-set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php scoring.php {LEAD_ID}
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php scoring.php
+```
+Ответ:
+```
+Scoring requested with ID: 5158826
+Waiting for status change.......
+Start to download report
+Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210309175001.pdf
+```
+
+
+#### Получение скоринга по ID лида &dash; полный цикл (*scoring-for-lead.php*)
+Mac \ Linux:
+```
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php scoring-for-lead.php {LEAD_ID}
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php scoring-for-lead.php {LEAD_ID}
+```
+Ответ:
+```
+Scoring requested with ID: 5158826
+Waiting for status change.......
+Start to download report
+Report downloaded: /.../exbico-underwriting-api-client/examples/report_20210309175001.pdf
+```
+
+
+#### Получение скоринга по ID лида и паспорту &dash; полный цикл (*scoring-for-lead-with-document.php*)
+Mac \ Linux:
+```
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php scoring-for-lead-with-document.php {LEAD_ID}
+```
+Windows:
+```
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php scoring-for-lead-with-document.php {LEAD_ID}
 ```
 Ответ:
 ```

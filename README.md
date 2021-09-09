@@ -100,6 +100,23 @@ $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
 
+
+### Запрос скоринга по ID лида и паспортным данным
+```php
+// Exbico lead id
+$leadId = 12345;
+ 
+// Document data
+$document = new DocumentWithIssueDateDto();
+$document->setNumber('333333');
+$document->setSeries('5555');
+$document->setIssueDate('2020-10-20');
+
+$reportStatus = $client->reports()->scoring()->requestLeadReport($leadId, $document);
+$requestId = $reportStatus->getRequestId(); // 21320130
+$statusLabel = $reportStatus->getStatus(); // 'inProgress'
+```
+
 ### Получение статуса подготовки отчета
 ```php
 $requestId = 21320130;
