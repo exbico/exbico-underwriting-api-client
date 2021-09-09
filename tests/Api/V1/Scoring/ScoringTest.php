@@ -39,7 +39,6 @@ class ScoringTest extends TestCase
      * @throws RuntimeException
      * @throws ForbiddenException
      * @throws ClientExceptionInterface
-     * @throws InvalidArgumentException
      * @throws NotFoundException
      * @throws UnauthorizedException
      * @throws ExpectationFailedException
@@ -64,6 +63,140 @@ class ScoringTest extends TestCase
         $reportStatus = $scoring->requestLeadReport($leadId);
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws LeadNotDistributedToContractException
+     * @throws NotEnoughMoneyException
+     * @throws NotFoundException
+     * @throws ProductNotAvailableException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ExpectationFailedException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws Exception
+     */
+    public function testRequestLeadWithPassportReport(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $requestId = random_int(1, 9999999);
+        $scoring = new Scoring(
+            $this->getClientWithMockHandler(
+                [
+                    $this->getRequestReportSuccessfulResponse($requestId),
+                ]
+            )
+        );
+        $passportWithIssueDate = $this->prepareDocumentWithIssueDateDto();
+        $reportStatus = $scoring->requestLeadReport($leadId, $passportWithIssueDate);
+        self::assertEquals($requestId, $reportStatus->getRequestId());
+        self::assertEquals('inProgress', $reportStatus->getStatus());
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws LeadNotDistributedToContractException
+     * @throws NotEnoughMoneyException
+     * @throws NotFoundException
+     * @throws ProductNotAvailableException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ExpectationFailedException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws Exception
+     */
+    public function testRequestLeadWithPassportReportWhenLeadNotDistributedToContract(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $scoring = new Scoring(
+            $this->getClientWithMockHandler(
+                [
+                    $this->getLeadNotDistributedToContractResponse(),
+                ]
+            )
+        );
+        $passportWithIssueDate = $this->prepareDocumentWithIssueDateDto();
+        $this->expectException(LeadNotDistributedToContractException::class);
+        $scoring->requestLeadReport($leadId, $passportWithIssueDate);
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws LeadNotDistributedToContractException
+     * @throws NotEnoughMoneyException
+     * @throws NotFoundException
+     * @throws ProductNotAvailableException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ExpectationFailedException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws Exception
+     */
+    public function testRequestLeadWithPassportReportWhenProductNotAvailable(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $scoring = new Scoring(
+            $this->getClientWithMockHandler(
+                [
+                    $this->getProductNotAvailableResponse(),
+                ]
+            )
+        );
+        $passportWithIssueDate = $this->prepareDocumentWithIssueDateDto();
+        $this->expectException(ProductNotAvailableException::class);
+        $scoring->requestLeadReport($leadId, $passportWithIssueDate);
+    }
+
+    /**
+     * @throws BadRequestException
+     * @throws ForbiddenException
+     * @throws HttpException
+     * @throws LeadNotDistributedToContractException
+     * @throws NotEnoughMoneyException
+     * @throws NotFoundException
+     * @throws ProductNotAvailableException
+     * @throws ServerErrorException
+     * @throws TooManyRequestsException
+     * @throws UnauthorizedException
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     * @throws ExpectationFailedException
+     * @throws ClientExceptionInterface
+     * @throws RuntimeException
+     * @throws Exception
+     */
+    public function testRequestLeadWithPassportReportWhenNotEnoughMoney(): void
+    {
+        $leadId = random_int(1, 9999999);
+        $scoring = new Scoring(
+            $this->getClientWithMockHandler(
+                [
+                    $this->getNotEnoughMoneyResponse(),
+                ]
+            )
+        );
+        $passportWithIssueDate = $this->prepareDocumentWithIssueDateDto();
+        $this->expectException(NotEnoughMoneyException::class);
+        $scoring->requestLeadReport($leadId, $passportWithIssueDate);
     }
 
     /**

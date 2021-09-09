@@ -71,6 +71,7 @@ class Scoring extends ReportApi implements ScoringInterface
 
     /**
      * @param int $leadId
+     * @param ?DocumentWithIssueDateDto $document
      * @return ReportStatusDto
      * @throws NotEnoughMoneyException
      * @throws ProductNotAvailableException
@@ -86,13 +87,13 @@ class Scoring extends ReportApi implements ScoringInterface
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
-    public function requestLeadReport(int $leadId): ReportStatusDto
+    public function requestLeadReport(int $leadId, ?DocumentWithIssueDateDto $document = null): ReportStatusDto
     {
-        $requestBody = $this->prepareRequestBody(
-            [
-                'leadId' => $leadId,
-            ]
-        );
+        $body = compact('leadId');
+        if ($document !== null) {
+            $body['document'] = $document->toArray();
+        }
+        $requestBody = $this->prepareRequestBody($body);
         $request = $this->makeRequest('POST', 'lead-scoring')->withBody($requestBody);
         try {
             $response = $this->sendRequest($request);
