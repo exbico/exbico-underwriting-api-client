@@ -3,8 +3,10 @@
 namespace Exbico\Underwriting\Tests\Api\V1\CreditRating\Nbch;
 
 use Exbico\Underwriting\Api\V1\CreditRating\Nbch\CreditRatingNbch;
-use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
-use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\IncomeDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
+use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
@@ -13,7 +15,6 @@ use Exbico\Underwriting\Exception\NotFoundException;
 use Exbico\Underwriting\Exception\ProductNotAvailableException;
 use Exbico\Underwriting\Exception\ReportGettingErrorException;
 use Exbico\Underwriting\Exception\ReportNotReadyException;
-use Exbico\Underwriting\Exception\BadRequestException;
 use Exbico\Underwriting\Exception\RequestPreparationException;
 use Exbico\Underwriting\Exception\ResponseParsingException;
 use Exbico\Underwriting\Exception\ServerErrorException;
@@ -59,7 +60,11 @@ class CreditRatingNbchTest extends TestCase
         $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getRequestReportSuccessfulResponse($requestId),
         ]));
-        $reportStatus = $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $reportStatus = $creditRatingNbch->requestReport(
+            $this->preparePerson(),
+            $this->prepareDocument(),
+            $this->prepareIncome()
+        );
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
     }
@@ -84,7 +89,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
 
@@ -107,7 +112,7 @@ class CreditRatingNbchTest extends TestCase
             $this->getProductNotAvailableResponse(),
         ]));
         $this->expectException(ProductNotAvailableException::class);
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -130,7 +135,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage(self::BAD_REQUEST_MESSAGE);
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -151,7 +156,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('Wrong token');
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -173,7 +178,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(ForbiddenException::class);
         $this->expectExceptionMessage(self::FORBIDDEN_REQUEST_MESSAGE);
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -194,7 +199,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(TooManyRequestsException::class);
         $this->expectExceptionMessage('Too many requests');
-        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument());
+        $creditRatingNbch->requestReport($this->preparePerson(), $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -221,7 +226,7 @@ class CreditRatingNbchTest extends TestCase
         $creditRatingNbch = new CreditRatingNbch($this->getClientWithMockHandler([
             $this->getRequestReportSuccessfulResponse($requestId),
         ]));
-        $reportStatus = $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+        $reportStatus = $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument(), $this->prepareIncome());
         self::assertEquals($requestId, $reportStatus->getRequestId());
         self::assertEquals('inProgress', $reportStatus->getStatus());
     }
@@ -248,7 +253,7 @@ class CreditRatingNbchTest extends TestCase
             $this->getLeadNotDistributedToContractResponse(),
         ]));
         $this->expectException(LeadNotDistributedToContractException::class);
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -274,7 +279,7 @@ class CreditRatingNbchTest extends TestCase
         ]));
         $this->expectException(NotEnoughMoneyException::class);
         $this->expectExceptionMessage('An error has occurred. Please check you have enough money to get this report.');
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -299,7 +304,7 @@ class CreditRatingNbchTest extends TestCase
             $this->getProductNotAvailableResponse(),
         ]));
         $this->expectException(ProductNotAvailableException::class);
-        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument());
+        $creditRatingNbch->requestLeadReport($leadId, $this->prepareDocument(), $this->prepareIncome());
     }
 
     /**
@@ -373,20 +378,29 @@ class CreditRatingNbchTest extends TestCase
         $creditRatingNbch->downloadPdfReport(-1, 'test.pdf');
     }
 
-    private function preparePerson(): PersonDto
+    private function preparePerson(): PersonWithBirthDateDto
     {
-        $person = new PersonDto();
-        $person->setFirstname('Homer');
-        $person->setMiddlename('Jay');
-        $person->setLastname('Simpson');
+        $person = new PersonWithBirthDateDto();
+        $person->setFirstName('Homer');
+        $person->setPatronymic('Jay');
+        $person->setLastName('Simpson');
+        $person->setBirthDate('1970-01-01');
         return $person;
     }
 
-    private function prepareDocument(): DocumentDto
+    private function prepareDocument(): DocumentWithIssueDateDto
     {
-        $document = new DocumentDto();
+        $document = new DocumentWithIssueDateDto();
         $document->setNumber('230032');
         $document->setSeries('2323');
+        $document->setIssueDate('1990-01-01');
         return $document;
+    }
+
+    private function prepareIncome(): IncomeDto
+    {
+        $income = new IncomeDto();
+        $income->setMonthlyIncome(90000);
+        return $income;
     }
 }

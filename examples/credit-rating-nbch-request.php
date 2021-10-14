@@ -6,10 +6,11 @@ require_once __DIR__ . '/bootstrap/bootstrap.php';
 /************************************/
 
 $client = getTestClient();
-$person = getTestPerson();
-$document = getTestDocument();
+$person = getTestPersonWithBirthDate();
+$document = getTestDocumentWithIssueDate();
+$income = getTestIncome();
 /**
  * Person credit rating request
  */
-$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document);
+$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document, $income);
 printf('Credit rating NBCH requested with ID: %d' . PHP_EOL, $reportStatus->getRequestId());
