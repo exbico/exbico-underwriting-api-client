@@ -45,4 +45,3 @@ function getTestIncome(): IncomeDto
     $income->setMonthlyIncome(50000);
     return $income;
 }
-

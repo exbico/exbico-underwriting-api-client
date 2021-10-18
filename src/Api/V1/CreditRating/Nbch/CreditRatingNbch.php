@@ -72,10 +72,6 @@ class CreditRatingNbch extends ReportApi implements CreditRatingNbchInterface
         DocumentWithIssueDateDto $document,
         ?IncomeDto $incomeDto
     ): array {
-        $personBody = $person->toArray();
-        if (empty($personBody['patronymic'])) {
-            unset($personBody['patronymic']);
-        }
         $body = [
             'person'   => $person->toArray(),
             'document' => $document->toArray(),
