@@ -32,37 +32,48 @@ $reportPrice = $reportPriceDto->getPrice();
 
 ### Запрос кредитного рейтинга НБКИ по ФИО и паспортным данным
 ```php
-use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
-use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
+use Exbico\Underwriting\Dto\V1\Request\IncomeDto;
 
 // Document data
-$document = new DocumentDto();
+$document = new DocumentWithIssueDateDto();
 $document->setNumber('333222');
 $document->setSeries('6500');
+$document->setIssueDate('2010-02-10');
 
 // Person data
-$person = new PersonDto();
-$person->setFirstname('Иван');
-$person->setLastname('Иванов');
-$person->setMiddlename('Иванович');
+$person = new PersonWithBirthDateDto();
+$person->setFirstName('Иван');
+$person->setLastName('Иванов');
+$person->setPatronymic('Иванович');
+$person->setBirthDate('1990-01-01');
 
-$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document);
+$income = new IncomeDto();
+$income->setMonthlyIncome(70000);
+
+$reportStatus = $client->reports()->creditRatingNbch()->requestReport($person, $document, $income);
 $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
 
 ### Запрос кредитного рейтинга НБКИ по ID лида и паспортным данным
 ```php
-use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\IncomeDto;
 
 // Document data
-$document = new DocumentDto();
+$document = new DocumentWithIssueDateDto();
 $document->setNumber('333222');
 $document->setSeries('6500');
+$document->setIssueDate('2010-02-10');
+
+$income = new IncomeDto();
+$income->setMonthlyIncome(70000);
 
 $leadId = 12345; // Exbico Lead Id
 
-$reportStatus = $client->reports()->creditRatingNbch()->requestLeadReport($leadId, $document);
+$reportStatus = $client->reports()->creditRatingNbch()->requestLeadReport($leadId, $document, $income);
 $requestId = $reportStatus->getRequestId(); // 21320130
 $statusLabel = $reportStatus->getStatus(); // 'inProgress'
 ```
@@ -124,7 +135,7 @@ $reportStatus = $client->reports()->reportStatus()->getReportStatus($requestId);
 $statusLabel = $reportStatus->getStatus(); // 'success'
 ```
 
-### Получение отчета кредитной истории НБКИ
+### Получение отчета кредитного рейтинга НБКИ
 ```php
 // ... Check status of report is 'success' 
 $requestId = 21320130;

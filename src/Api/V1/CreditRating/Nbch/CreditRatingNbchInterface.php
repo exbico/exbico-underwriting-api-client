@@ -1,13 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Exbico\Underwriting\Api\V1\CreditRating\Nbch;
 
-use Exbico\Underwriting\Dto\V1\Request\DocumentDto;
-use Exbico\Underwriting\Dto\V1\Request\PersonDto;
+use Exbico\Underwriting\Dto\V1\Request\DocumentWithIssueDateDto;
+use Exbico\Underwriting\Dto\V1\Request\IncomeDto;
+use Exbico\Underwriting\Dto\V1\Request\PersonWithBirthDateDto;
 use Exbico\Underwriting\Dto\V1\Response\ReportStatusDto;
-use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\BadRequestException;
+use Exbico\Underwriting\Exception\ForbiddenException;
 use Exbico\Underwriting\Exception\HttpException;
 use Exbico\Underwriting\Exception\LeadNotDistributedToContractException;
 use Exbico\Underwriting\Exception\NotEnoughMoneyException;
@@ -28,10 +30,12 @@ interface CreditRatingNbchInterface
 {
     /**
      * Ordering credit rating NBCH product
-     * @param PersonDto $person
-     * @param DocumentDto $document
+     *
+     * @param PersonWithBirthDateDto $person
+     * @param DocumentWithIssueDateDto $document
+     * @param IncomeDto|null $incomeDto
+     * @return ReportStatusDto
      * @throws NotEnoughMoneyException
-     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws ForbiddenException
      * @throws HttpException
@@ -43,15 +47,21 @@ interface CreditRatingNbchInterface
      * @throws ClientExceptionInterface
      * @throws RuntimeException
      */
-    public function requestReport(PersonDto $person, DocumentDto $document): ReportStatusDto;
+    public function requestReport(
+        PersonWithBirthDateDto $person,
+        DocumentWithIssueDateDto $document,
+        ?IncomeDto $incomeDto = null
+    ): ReportStatusDto;
 
     /**
      * @param int $leadId
-     * @param DocumentDto $document
+     * @param DocumentWithIssueDateDto $document
+     * @param IncomeDto|null $incomeDto
      * @return ReportStatusDto
      * @throws ClientExceptionInterface
      * @throws NotEnoughMoneyException
      * @throws LeadNotDistributedToContractException
+     * @throws ProductNotAvailableException
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
@@ -62,10 +72,15 @@ interface CreditRatingNbchInterface
      * @throws RequestPreparationException
      * @throws InvalidArgumentException
      */
-    public function requestLeadReport(int $leadId, DocumentDto $document): ReportStatusDto;
+    public function requestLeadReport(
+        int $leadId,
+        DocumentWithIssueDateDto $document,
+        ?IncomeDto $incomeDto = null
+    ): ReportStatusDto;
 
     /**
      * Getting pdf report of credit rating NBCH product
+     *
      * @param int $requestId
      * @param string $savePath
      * @throws ReportGettingErrorException
