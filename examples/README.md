@@ -3,11 +3,11 @@
 #### Запрос на получение кредитного рейтинга НБКИ по ID лида (*credit-rating-nbch-request-for-lead.php*)
 Mac \ Linux:
 ```
-API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-request-for-lead.php {LEAD_ID}
+API_URL=https://app.exbico.ru/underwritingApi API_TOKEN={EXBICO_API_TOKEN} php credit-rating-nbch-request-for-lead.php {LEAD_ID}
 ```
 Windows:
 ```
-set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-request-for-lead.php {LEAD_ID}
+set API_URL=https://app.exbico.ru/underwritingApi && set API_TOKEN={EXBICO_API_TOKEN} && php credit-rating-nbch-request-for-lead.php {LEAD_ID}
 ```
 Ответ:
 ```
